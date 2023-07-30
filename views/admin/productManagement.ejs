@@ -1,0 +1,74 @@
+<%-include('adminNavbar')%>
+    
+    <div class="d-flex " style=" width: 80%; margin-left: 25px; justify-content: space-between;">
+        <h3 class="mb-5 mt-5 ml-5">Products</h3>
+        <a href="/admin/products/addProduct" class="btn btn-outline-success" style="height: 40px; width: 200px; margin-top: 35px;">Add New Product</a>
+      </div>
+    
+        <div class="d-flex">
+        <form action="/admin/products/search" method="post" class="d-flex ms-2 me-2" role="search" >
+            <input class="form-control me-2 border-success" type="text" placeholder="Search Category" id="search" name="search">
+            <button class="btn btn-outline-success" type="submit" value="Search">Search</button>
+        </form> 
+      </div>
+   
+      <%if(products.length===0){%>
+        <div class="col-md-6">
+            <strong class="text-danger">No Products exists </strong>
+        </div>
+        <div class="col-md-6 py-4 ps-3">
+          
+            <a href="/admin/products/addProduct" class="btn btn-success">Add</a>
+          </div>
+        <% }else{ %>
+            
+            
+        <table class="table table-striped  " style="text-align: left;">
+          <thead class="thead-dark">
+            <tr>
+             
+              <th  scope="col">Product Name</th>
+              <th  scope="col">Images</th>
+              <th scope="col">Price</th>
+              <th scope="col">Stock</th>
+            </tr>
+          </thead>
+    
+          <tbody>
+            <% for(let i=0; i<products.length; i++){  %>
+              <tr>
+                 
+                  
+                  <td style="text-transform: capitalize;"><%= products[i].productName %></td>
+                  
+                  <td>
+                    <div style="display: flex;gap: 10px;">
+                      <% products[i].images.forEach(function(imagePath) { %>
+                      <img src="/asset/uploads/<%= imagePath %>" alt="<%= products[i].productName%>" style="width: 65px; height: 65px;">
+                      <% }); %>
+                    </div>
+                    </td>
+                  <td>Rs. <%= products[i].price %></td>
+                  <td> <%= products[i].stock %></td>
+                  <td>
+                          <a href="/admin/products/edit?id=<%= products[i]._id %>" class="btn btn-success">
+                          Edit
+                      </a>
+
+                          <a href="/admin/products/delete?id=<%= products[i]._id %>" class="btn btn-danger">
+                              Delete
+                          </a>
+                          
+                  </td>
+
+                        
+       
+              </tr>
+              <% } %>
+          </tbody>
+        </table>
+        <% } %>
+    
+        
+</body>
+</html>

@@ -1,0 +1,38 @@
+<%- include('./partials/header.ejs') -%>
+<%- include('./partials/navbar.ejs') -%>
+
+
+    <div class="container bg mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="text-center pt-5" id="login">
+            <div class="container border py-5">
+              <div class="title">
+               
+                
+                <h2 class="font-weight-bold heading-clr text-capitalize"> OTP Verification </h2>
+                
+              </div>
+
+
+
+    <form method="POST" action="" class="pt-3">
+      <% if(locals.message){ %>
+        <div>
+          <p class="text-danger"><%= message %></p>
+        </div>
+        <% } %>
+        
+        <% if(locals.otp){%>
+        <input type="text" name="otp" placeholder="Enter OTP" /><br><br>
+        <%}else{ %>
+      <input type="tel" name="phone" placeholder="Enter registered number" class="form-control" style="width: 50%;display: inline;" /><br>
+      <% } %>
+      <button type="submit" class="btn btn-bg btn-block mt-3 mb-3">Verify</button>
+    </form>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<%- include('./partials/footer.ejs') -%>

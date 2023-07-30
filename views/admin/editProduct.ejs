@@ -1,0 +1,146 @@
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<%-include('adminNavbar')%>
+
+
+<section  class="bg-success">
+    <div class="container ">
+      <div class="row d-flex justify-content-center align-items-center ">
+        <div class="col-xl-9">
+  
+          <h1 class="text-white mb-4">Edit Product</h1>
+  
+          <div class="card" style="border-radius: 15px;">
+
+            <form action="/admin/products/edit" method="post" enctype="multipart/form-data">
+            <div class="card-body">
+              
+              
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Product Name</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="text" class="form-control form-control-lg" value="<%=product.productName %>" name="productName" />
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Product Price</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="number" class="form-control form-control-lg" value="<%=product.price %>" name="price" />
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Product Stock</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="number" class="form-control form-control-lg" value="<%=product.stock %>" name="stock" />
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+
+              <div class="row align-items-center py-3" style="display: flex;">
+                <div class="col-md-3 ps-5" style="flex: 1;">
+  
+                  <h6 class="mb-0">Product Category</h6>
+  
+                </div>
+                <div style="flex: 1;">
+                  <select name="selectcategory" class="form-select mr-5" aria-label="Default select example">
+                    <option name="<%=categoryName  %>" value="<%= categoryName %>" selected><%=categoryName  %></option>
+                    <% categories.forEach((category) => { %>
+                      <% if(product.productCategory != category.categoryName) {%>
+                        <option name="<%= category.categoryName %>" value="<%= category.categoryName %>"><%= category.categoryName %></option>
+                      <%}%>
+                    <% }) %>
+                  </select>
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Product Details</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <textarea class="form-control" rows="3"  name="description"><%=product.description %></textarea>
+  
+                </div>
+              </div>
+
+              <hr class="mx-n3">
+
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+                  
+                  <h6 class="mb-0">Product Images</h6>
+  
+                  <div class="thumbnail text-center" style="width: 600px; display: flex; justify-content: space-around;" >
+                    <% var images = product.images; %>
+                    <% for (var i=0;i< images.length;i++) { %>
+                      <div style="width: 100px; height: 200px;">
+                      <img src="/asset/uploads/<%= images[i] %>" width="50"  style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; margin-left: 10px;">
+                      <a href="/admin/product/deleteimage?productImages=<%=images[i]%>" class="btn btn-outline-danger" style="margin-top: 10px;"><i class="fa fa-remove" style="font-size:15px"></i></a>
+
+                    </div>
+                    <% } %>
+                  </div>
+                </div>
+
+              <hr class="mx-n3">
+              
+              <div style="display: flex;">
+
+                <div class="col-md-3 ps-5" style="flex: 1;" >
+    
+                  <h6 class="mb-0" >Category Image upload</h6>
+  
+                </div>
+                <div style="flex: 1;">
+                <input class="form-control" name="file" type="file" id="formFileMultiple" multiple />
+              </div>
+              </div>
+  
+              <hr class="mx-n3">
+  
+              <div class="px-5 py-4 text-center">
+                <button type="submit" class="btn btn-success btn-lg">Submit</button>
+              </div>
+  
+            </div>
+        </form>
+
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  

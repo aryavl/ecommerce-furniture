@@ -1,0 +1,113 @@
+<%- include('./partials/header.ejs')  -%>
+<%- include('./partials/navbar.ejs')  -%>
+
+	
+
+
+<div class="container wrapper" style="margin-top: 4rem;">
+            <div class="row cart-head">
+                <div class="container">
+                
+               
+                <div class="row">
+                    <p></p>
+                </div>
+                </div>
+            </div>    
+            <div class="row cart-body">
+                
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-push-6 col-sm-push-6">
+                   
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-pull-6 col-sm-pull-6">
+
+
+                    <div class="panel panel-info">
+                        <div class="panel-heading">Address</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <h4>Shipping Address</h4>
+                                <div class="col-md-12 d-flex">
+                                    
+
+                                </div>
+                                </div>
+                        </div>
+                    </div>
+
+                    <!--SHIPPING METHOD-->
+                    <div class="panel panel-info">
+                        <div class="panel-heading">Add New Address</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <h4>Shipping Address</h4>
+                                </div>
+                            </div>
+                            <form class="form-horizontal" method="post" action="/shipping">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="text" name="id" class="form-control" value="" hidden/>
+                                    </div>
+                                </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>First Name:</strong>
+                                    <input type="text" name="first_name" class="form-control" value="" />
+                                </div>
+                                <div class="span1"></div>
+                                <div class="col-md-6 col-xs-12">
+                                    <strong>Last Name:</strong>
+                                    <input type="text" name="last_name" class="form-control" value="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>House name:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" name="house_name" class="form-control" value="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>City:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" name="city" class="form-control" value="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>State:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" name="state" class="form-control" value="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Zip / Postal Code:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" name="zip_code" class="form-control" value="" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Phone Number:</strong></div>
+                                <div class="col-md-12"><input type="text" name="phone_number" class="form-control" value="" /></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12"><strong>Country:</strong></div>
+                                <div class="col-md-12">
+                                    <input type="text" class="form-control" name="country" value="" />
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-success justify-content-center" style="margin: auto; margin-top: 10px;">ADD</button>
+                        </form>
+                        </div>
+                    </div>
+                    <!--SHIPPING METHOD END-->
+                    
+                </div>
+                
+                <a type="btn" class="btn btn-success" style="width: 50%;" href="/checkout">CONTINUE</a>
+            </div>
+            <div class="row cart-footer">
+        
+            </div>
+    </div>
+    <%- include('./partials/footer.ejs')  -%>

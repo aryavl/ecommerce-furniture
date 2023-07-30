@@ -1,0 +1,44 @@
+
+<%- include('./partials/header.ejs')-%>
+<%- include('./partials/navbar.ejs')-%>
+<div class="container bg mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="text-center pt-5" id="login">
+        <div class="container border py-5">
+          <div class="title">
+           
+            
+            <h2 class="font-weight-bold heading-clr text-capitalize"> Login</h2>
+            
+          </div>
+          <% if(locals.emailLink){ %>
+            <h3>Thank you for staying with us. We have sent the reset password link to your email. Please check your email.</h3>
+            <% }else{ %>
+          <form action="" method="POST" class="pt-3">
+            <% if(locals.message){ %>
+            <div>
+              <p class="text-danger"><%= message %></p>
+            </div>
+            <% } %>
+            <div class="form-group">
+              <input
+                type="email"
+                class="form-control"
+                placeholder="Email"
+                name="email"
+                required
+              /><br />
+            </div>
+         
+            <button type="submit" class="btn btn-bg btn-block mt-3 mb-3">
+                Sent 
+              </button>
+          </form>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('./partials/footer.ejs') -%>

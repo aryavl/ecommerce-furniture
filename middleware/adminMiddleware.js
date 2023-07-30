@@ -1,0 +1,14 @@
+module.exports.isAdminLoggedIn=(req,res,next)=>{
+    if(req.session.adminId){
+        next()
+    }else{
+        res.redirect('/admin')
+    }
+}
+module.exports.isAdminLoggIn=(req,res,next)=>{
+    if(req.session.adminId){
+        res.redirect('/adminDashboard/user')
+    }else{
+        next()
+    }
+}

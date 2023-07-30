@@ -1,0 +1,69 @@
+
+<%- include('./partials/header.ejs')-%>
+<%- include('./partials/navbar.ejs')-%>
+<div class="container bg mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="text-center pt-5" id="login">
+        <div class="container border py-5">
+          <div class="title">
+           
+            
+            <h2 class="font-weight-bold heading-clr text-capitalize"> Login</h2>
+            
+          </div>
+       
+          <form action="" method="POST" class="pt-3">
+            <% if(locals.message){ %>
+            <div>
+              <p class="text-danger"><%= message %></p>
+            </div>
+            <% } %>
+            <% if(locals.passwordMessage){ %>
+            <div>
+              <p class="text-success"><%= message %></p>
+            </div>
+            <% } %>
+            <div class="form-group">
+              <input
+                type="email"
+                class="form-control"
+                placeholder="Email"
+                name="email"
+                required
+              /><br />
+            </div>
+            <div class="form-group">
+              <input
+                type="password"
+                class="form-control"
+                name="password"
+                placeholder="Password"
+                required
+              /><br />
+            </div>
+            
+            <button type="submit" class="btn btn-bg btn-block mt-3 mb-3">
+                Login 
+              </button>
+            <div class="form-group">
+              <a class="text-capitalize" href="/otpLogin">Login Using OTP</a>
+            </div>
+            <div class="form-group">
+              <a class="text-capitalize" href="/forgot">Forgot password</a>
+            </div>
+            <div class="form-group">
+              New User ? 
+              <a class="text-capitalize" data-id="user" href="/signup"
+                > Create account</a
+              >
+            </div>
+
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('./partials/footer.ejs') -%>
