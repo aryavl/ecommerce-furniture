@@ -1,6 +1,7 @@
 const Admin = require("../../model/adminModel")
 const bcrypt = require('bcrypt')
 const User = require("../../model/userModel")
+
 module.exports.getAdminLoginPage =(req,res)=>{
     // console.log("admin");
     res.render('adminLogin')

@@ -21,6 +21,13 @@ module.exports.isLogin=(req,res,next)=>{
         next()
     }
 }
+module.exports.isCheckout=(req,res,next)=>{
+    if(req.session.check){
+        res.redirect('/confirm-order')
+    }else{
+        next()
+    }
+}
 
 const generateOTP = ()=>{
     const otpLength = 6;

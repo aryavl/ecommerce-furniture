@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 const db = require('../config/db')
 const orderSchema = new mongoose.Schema({
-    // orderid : {
-        // type : String,
-        // required : true
-    // },
+    orderId : {
+        type : String,
+        required : true
+    },
     
     user:{
         type:mongoose.Schema.Types.ObjectId,
@@ -14,8 +14,8 @@ const orderSchema = new mongoose.Schema({
     
     orderStatus : {
         type : String,
-        required : true,
-        default : "Pending"
+       
+        default : "pending"
     },
     orderItems : {
         type : Array,
@@ -34,9 +34,16 @@ const orderSchema = new mongoose.Schema({
     },
     paymentMethod :{
         type : String,
+    },
+    address:{
+        type:String,
+    },
+    isList:{
+        type:Boolean,
+        default:true,
     }
 })
 
-const Order = new mongoose.model("Order",orderSchema);
+const Order = db.model("Order",orderSchema);
 
 module.exports = Order;

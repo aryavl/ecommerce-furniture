@@ -1,0 +1,64 @@
+<%- include('./partials/header.ejs')  -%>
+<%- include('./partials/profileNav.ejs')  -%>
+<div class="container mt-5 pt-5">
+    <div class="row">
+        <% if(orderItem.length===0){ %>
+            <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+                <div class="m-l-25 m-r--38 m-lr-0-xl">
+                    <span class="text-center text-danger">No items</span><br>
+                    <a href="/products">Shop Now</a>
+                </div>
+            </div>
+        <% } else{ %>
+            <div class="col-lg-10 col-xl-10 m-lr-auto m-b-50">
+                <div class="m-l-25 m-r--38 m-lr-0-xl">
+                    <div class="wrap-table-shopping-cart">
+                        <table class="table-shopping-cart">
+                            <tr class="table_head">
+                                <th class="column-1 text-center"></th>
+                                <th class="column-2 text-center">Product</th>
+                                <th class="column-2 text-center">Quantity</th>
+                                <th class="column-2 text-center">Total</th>
+                                <th class="column-3 text-center">Status</th>
+                                <th class="column-4 text-center"></th>
+                                
+                                
+                            </tr>
+                            
+                            
+                            <% orderItem.forEach((item, index) => { %>
+                                <% const matchingProduct = productDetail[index]; %>
+                                <tr class="table_row">
+                                    <td class="column-1 text-center">
+                                        <div class="how-itemcart1">
+                                            <img src="/asset/uploads/<%=matchingProduct.images[0]%>" alt="">
+                                        </div>
+                                    </td>
+                                    <td class="column-1 text-center">
+                                        <ul>
+                                            <li><%= matchingProduct.productName %></li>
+                                        </ul>
+                                    </td>
+                                    <td class="column-1 text-center"><%= matchingProduct.quantity %></td>
+                                    <td class="column-1 text-center">&#8377; <%= item.totalAmount %></td>
+                                    <td class="column-1 text-center"><%= item.orderStatus %></td>
+                                    <td class="column-1 text-center">
+                                        <button class=" btn btnStyle mb-3" style="padding: 7px 20px;">Track</button>
+                                        <button class="btn btn-outline-danger">Cancel</button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                            
+                               
+                               
+                               
+                               
+                            </table>
+                        </div>
+                        <% } %>
+                        </div>
+                        </div>
+    </div>
+    </div>
+    
+<%- include('./partials/footer.ejs')  -%>

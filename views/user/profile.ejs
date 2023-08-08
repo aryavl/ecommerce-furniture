@@ -1,8 +1,209 @@
 <%- include('./partials/header.ejs')  -%>
-<%- include('./partials/navbar.ejs')  -%>
-
- 
+<%- include('./partials/profileNav.ejs')  -%>
 
 
+    
+    <section class="container bg0 p-t-100 p-b-140">
+        <div class="row d-flex mb-md-3 ">
+           
+            <div class="col-md-9">
+                <div class="container-fluid p-1 bg-white mt-md-4 shadow"
+                    style="border-radius: 10px; box-shadow: 0 0 10px green;">
+                    <div class="container row d-flex">
+                        <!-- personal image add/update section -->
+                        <div class="col-md-4 p-lg-5 " id="profileImage">
 
+                            <div class="pt-md-5">
+                             
+                            </div>
+                            <div class="pt-lg-2">
+                                <form action="/profile/photoUpload" method="POST" id="form" enctype="multipart/form-data" style="display: none;" >
+                                    <input type="file" name="profileImage" id="profilePictureInput" >
+                                    <img id="profilePicturePreview" style="height: 200px;">
+                                    <button class="btn bg-white border-0" type="button" id="cropButton" onclick="upload()">Upload</button>
+                                   
+                                    <button class="btn bg-white border-0" type="button" onclick="cancelImage()">cancel</button>
+                                  </form>
+                                  <div id="up">
+                                <%  if(userdata.profileImage){ %>
+                                    <button class="btn " onclick="uploadImage1()" 
+                                    style=" background-color: white; border-color:aqua ;">Edit Profile
+                                    Picture</button>
+                               
+                                    <%  }else{%>
+                                        <button class="btn "  onclick="uploadImage()" style=" background-color: white; border-color:aqua ;">Add Profile
+                                            Picture</button>
+                                    <%  }%>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal Details Update Division-->
+                        <div class="col-md-8 p-lg-5" id="profileDetails">
+                            <div class="pt-md-2">
+                                <h6>Personal Details</h6>
+                                <h6 class="pt-md-5">Name</h6>
+                                <div class="row d-flex pt-md-1">
+                                    <div class="col-md-5" id="first_name">
+                                        <input type="text" id="name" name="name" placeholder="Name"
+                                            value="<%=  userdata.name %>" disabled>
+                                    </div>
+                                    <div class="col-md-1" id="first_name">
+                                        <button onclick="editName()" style="border: none;" id="editNameButton"
+                                            class="btn bg-white">edit</button>
+                                    </div>
+                                    <div class="col-md-3" id="update_button" style="display: none;">
+                                        <button class="btn " onclick="saveName()"> Update</button>
+                                    </div>
+                                    <div class="col-md-3" id="cancel_button" style="display: none;">
+                                        <button class="btn " onclick="cancel()"> cancel</button>
+                                    </div>
+                                </div>
+                                <div class="pt-md-3">
+                                    <h6>Phone Number</h6>
+                                    <div class="row d-flex pt-md-1">
+                                        <div class="col-md-5">
+                                            <input type="text" placeholder="Phone" id="phone"
+                                                value="<%=  userdata.phone %>" disabled>
+                                        </div>
+                                        <div class="col-md-1" id="editPhone">
+                                            <button onclick="editPhone()" style="border: none;" id="editPhoneButton"
+                                                class="btn bg-white">edit</button>
+
+                                        </div>
+                                        <div class="col-md-3" id="update_buttonPhone" style="display: none;">
+                                            <button class="btn " onclick="savePhone()"> Update</button>
+                                        </div>
+                                        <div class="col-md-3" id="cancel_buttonPhone" style="display: none;">
+                                            <button class="btn " onclick="cancel()"> cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="pt-md-3">
+                            <h6>Add Gender</h6>
+                            <div class="row d-flex pt-md-1">
+                                <div class="col-md-6" id="first_name">
+                                 
+                                    <input type="text" placeholder="Phone" disabled>
+                                </div>
+                                <div class="col-md-1" id="first_name">
+                                    <a href=""><span>edit</span></a>
+                                </div>
+                                <div class="col-md-5"  id="update_button" style="display: none;">
+                                    <button class="btn "> Update</button>
+                                </div>
+                            </div>
+                        </div> -->
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="container p-lg-5">
+                        <h5 class="ps-md-4">FAQs</h5>
+                        <div class="row d-flex m-md-3">
+                            <div class="col-md-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-question-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path
+                                        d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" />
+                                </svg>
+                            </div>
+                            <div class="col-md-11 align-content-md-start">
+
+                                <span>What happens when I update my mobile number?</span>
+                            </div>
+
+                        </div>
+                        <div class="row d-flex m-md-3">
+                            <div class="col-md-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-lightbulb" viewBox="0 0 16 16">
+                                    <path
+                                        d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" />
+                                </svg>
+                            </div>
+                            <div class="col-md-11 align-content-md-start">
+
+                                <p>Your login mobile number changes, likewise.
+                                    You'll receive all your account related communication on your
+                                    updated mobile number.</p>
+                            </div>
+
+                        </div>
+
+                        <div class="row d-flex m-md-3">
+                            <div class="col-md-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-question-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path
+                                        d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" />
+                                </svg>
+                            </div>
+                            <div class="col-md-11 align-content-md-start">
+
+                                <span>When will my account be updated with the new mobile number?</span>
+                            </div>
+                        </div>
+                        <div class="row d-flex m-md-3">
+                            <div class="col-md-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-lightbulb" viewBox="0 0 16 16">
+                                    <path
+                                        d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" />
+                                </svg>
+                            </div>
+                            <div class="col-md-11 align-content-md-start">
+
+                                <p> It happens as soon as you confirm the verification code sent to your mobile and save
+                                    the changes..</p>
+                            </div>
+                        </div>
+
+
+                        <div class="row d-flex m-md-3">
+                            <div class="col-md-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-question-circle" viewBox="0 0 16 16">
+                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    <path
+                                        d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z" />
+                                </svg>
+                            </div>
+                            <div class="col-md-11 align-content-md-start">
+
+                                <span>Why i am not able to update my email address?</span>
+                            </div>
+                        </div>
+                        <div class="row d-flex m-md-3">
+                            <div class="col-md-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-lightbulb" viewBox="0 0 16 16">
+                                    <path
+                                        d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" />
+                                </svg>
+                            </div>
+                            <div class="col-md-11 align-content-md-start">
+
+                                <p>Your email address is your username. So if you want to update your email address,
+                                    you can contact our customer care.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="container m-md-3 ">
+                        <button class="btn btnStyle ms-lg-5 mb-lg-5"
+                            >Deactivate Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+<script src="/public/asset/js/profile.js"></script>
 <%- include('./partials/footer.ejs')  -%>

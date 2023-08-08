@@ -1,113 +1,215 @@
 <%- include('./partials/header.ejs')  -%>
-<%- include('./partials/navbar.ejs')  -%>
+<%- include('./partials/profileNav.ejs')  -%>
 
-	
-
-
-<div class="container wrapper" style="margin-top: 4rem;">
-            <div class="row cart-head">
-                <div class="container">
-                
-               
-                <div class="row">
-                    <p></p>
-                </div>
-                </div>
-            </div>    
-            <div class="row cart-body">
-                
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-push-6 col-sm-push-6">
-                   
-                </div>
-                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 col-md-pull-6 col-sm-pull-6">
-
-
-                    <div class="panel panel-info">
-                        <div class="panel-heading">Address</div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <h4>Shipping Address</h4>
-                                <div class="col-md-12 d-flex">
-                                    
-
-                                </div>
-                                </div>
-                        </div>
-                    </div>
-
-                    <!--SHIPPING METHOD-->
-                    <div class="panel panel-info">
-                        <div class="panel-heading">Add New Address</div>
-                        <div class="panel-body">
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    <h4>Shipping Address</h4>
-                                </div>
-                            </div>
-                            <form class="form-horizontal" method="post" action="/shipping">
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <input type="text" name="id" class="form-control" value="" hidden/>
-                                    </div>
-                                </div>
-                            <div class="form-group">
-                                <div class="col-md-6 col-xs-12">
-                                    <strong>First Name:</strong>
-                                    <input type="text" name="first_name" class="form-control" value="" />
-                                </div>
-                                <div class="span1"></div>
-                                <div class="col-md-6 col-xs-12">
-                                    <strong>Last Name:</strong>
-                                    <input type="text" name="last_name" class="form-control" value="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12"><strong>House name:</strong></div>
-                                <div class="col-md-12">
-                                    <input type="text" name="house_name" class="form-control" value="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12"><strong>City:</strong></div>
-                                <div class="col-md-12">
-                                    <input type="text" name="city" class="form-control" value="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12"><strong>State:</strong></div>
-                                <div class="col-md-12">
-                                    <input type="text" name="state" class="form-control" value="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12"><strong>Zip / Postal Code:</strong></div>
-                                <div class="col-md-12">
-                                    <input type="text" name="zip_code" class="form-control" value="" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12"><strong>Phone Number:</strong></div>
-                                <div class="col-md-12"><input type="text" name="phone_number" class="form-control" value="" /></div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12"><strong>Country:</strong></div>
-                                <div class="col-md-12">
-                                    <input type="text" class="form-control" name="country" value="" />
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-success justify-content-center" style="margin: auto; margin-top: 10px;">ADD</button>
-                        </form>
-                        </div>
-                    </div>
-                    <!--SHIPPING METHOD END-->
-                    
-                </div>
-                
-                <a type="btn" class="btn btn-success" style="width: 50%;" href="/checkout">CONTINUE</a>
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" style="padding-top: 50px;">
+    <!-- Your main content goes here -->
+    <!-- <h1>Welcome to your dashboard!</h1> -->
+    <div class="container mt-5">
+        <h2>Address Management</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mt-5">
+                <button type="button" class="btn btnStyle" data-toggle="modal" data-target="#exampleModal">
+                    Add Address
+                  </button>                
             </div>
-            <div class="row cart-footer">
-        
+            <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Address Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="post" onsubmit="return validateForm();">
+           
+                <div>
+                  <p class="text-danger"></p>
+                  <p id="error-message" class="text-danger"></p>
+                </div>
+              
+       
+            <div class="card-body">
+
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Name</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="text" class="form-control form-control-lg" name="name" />
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Phone</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="number" class="form-control form-control-lg" name="phone" required/>
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">House No.</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="number" class="form-control form-control-lg" name="houseNumber" required />
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Pincode</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="number" class="form-control form-control-lg" name="pincode" required/>
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+
+              
+  
+             
+
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Address</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <textarea class="form-control" rows="3" name="address" required></textarea>
+  
+                </div>
+              </div>
+
+              <hr class="mx-n3">
+              
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Landmark</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="text" class="form-control form-control-lg" name="landmark" />
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+              
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">City</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="text" class="form-control form-control-lg" name="city" required/>
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+  
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">State</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="text" class="form-control form-control-lg" name="state" required />
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
+              <div class="row align-items-center py-3">
+                <div class="col-md-3 ps-5">
+  
+                  <h6 class="mb-0">Alternate Phone</h6>
+  
+                </div>
+                <div class="col-md-9 pe-5">
+  
+                  <input type="number" class="form-control form-control-lg" name="altPhone" />
+  
+                </div>
+              </div>
+  
+              <hr class="mx-n3">
             </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
+    </div>
+
+    <div class="row mt-5">
+            <%if(locals.addressList) { %>
+                <% addressList.forEach((address) => { %>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card mb-4 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="mb-3">
+                            <h3 class="mb-1"><%= address.name %></h3>
+                            <p><span class="font-weight-bold">Phone: </span><%= address.phone %></p>
+                            <p><span class="font-weight-bold">Address: </span>House No. <%= address.houseNumber %>, <%= address.landmark %> <%= address.city %> <%= address.state %></p>
+                           
+                            <p><span class="font-weight-bold">Pincode: </span><%= address.state %> <%= address.pincode %></p>
+                           <%if(address.alternatePhone!==0) { %> 
+                            <p><span class="font-weight-bold">Alternate Phone: </span><%= address.alternatePhone %> </p>
+                            <% } %>
+                        </div>
+                            <div class=" d-flex justify-content-between">
+                                <div class="btn-group">
+                                    <a class="btn btnStyle mr-2" href="/editaddress?id=<%= address._id %>">Edit</a>
+                                    <a class="btn btn-danger" href="/deleteaddress?id=<%= address._id %>">Delete</a>
+                                </div>
+                            </div>
+    
+                        </div>
+                    </div>
+                    </div>
+                <% }) %>
+            <%}%>
+        </div>
+</main>
+<script src="/asset/js/addressValidation.js"></script>
     <%- include('./partials/footer.ejs')  -%>

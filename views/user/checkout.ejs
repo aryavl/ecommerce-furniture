@@ -1,64 +1,96 @@
 <%- include('./partials/header.ejs')  -%>
 <%- include('./partials/navbar.ejs')  -%>
 
-<form class="bg0 p-t-75 p-b-85">
-    <div class="container">
-        <div class="row">
-          
-            <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
-                <div class="m-l-25 m-r--38 m-lr-0-xl">
-                    <div class="wrap-table-shopping-cart">
-                        <table class="table-shopping-cart">
-                            <tr class="table_head">
-                                <th class="column-1">Product</th>
-                                <th class="column-2"></th>
-                                <th class="column-3">Price</th>
-                                <th class="column-4">Quantity</th>
-                                <th class="column-5">Total</th>
-                            </tr>
-
-                            <tr class="table_row">
-                                <td class="column-1">
-                                    <div class="how-itemcart1">
-                                        <img src="/asset/uploads/d1s1.jpg" alt="IMG">
-                                    </div>
-                                </td>
-                                <td class="column-2">fanye 5-piece counter height kitchen & dining room</td>
-                                <td class="column-3">Rs. 50000.00</td>
-                                <td class="column-4">
-                                    <div class="wrap-num-product flex-w m-l-auto m-r-0">
-                                        <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-                                            <i class="fs-16 zmdi zmdi-minus"></i>
-                                        </div>
-
-                                        <input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value="1">
-
-                                        <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-                                            <i class="fs-16 zmdi zmdi-plus"></i>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="column-5">Rs.50000.00</td>
-                            </tr>
-
-                            
-                        </table>
-                    </div>
-
-                    <div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
-                        <div class="flex-w flex-m m-r-20 m-tb-5">
-
-                            
-                        <a href="/confirm-order" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-                            Checkout
-                        </a>
-                    </div>
-                </div>
+<section class="h-100 gradient-custom mt-5">
+  <div class="container py-5">
+    <div class="row justify-content-center my-4">
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <div class="card-header py-3">
+            <h5 class="mb-0">Order Summary</h5>
+          </div>
+          <form action="" method="post">
+          <div class="card-body">
+            <% const subtotal=[] %>
+            <% productData.forEach((item) => { %>
+            <% const total = item.product.price * item.count %>
+            <% subtotal.push(total) %>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <p class="text-capitalize"><strong><%= item.product.productName %></strong></p>
+                <h6 class="mb-0">Price: &#8377;<%= item.product.price %></h6>
+                <h6 class="mb-0">Quantity: <%= item.count %></h6>
+                <p class="mb-0">Total: &#8377;<%= total %></p>
+              </div>
             </div>
-
-           
+            <% }) %>
+            <% const grandTotal = subtotal.reduce((acc, curr) => acc + curr) %>
+          </div>
         </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="card mb-4">
+                  <div class="card-header py-3">
+                    <div>
+                      <strong>Total amount</strong>
+                      <strong>
+                        <p class="mb-0">(including VAT)</p>
+                      </strong>
+                    </div>
+                    <h4 class="mb-0 mt-2">&#8377;<%= grandTotal %></h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</form>
+    <h4 class="mb-3">Address</h4>
+    <div class="d-block my-3 p-3">
+      <a href="/address" class="btn btnStyle">Add Address here </a>
+      </div>
     
+    <% addressList.forEach(item => { %>
+      <% const { name, address, phone, houseNumber, pincode, city, state, landmark, alternatePhone } = item; %>
+      <div class="d-block my-3 p-3">
+        <div class="form-check form-check-inline mr-3">
+          <input id="cod" name="address" type="radio" class="form-check-input" checked value="<%= name %>,<%= phone %>,<%= address %>,<%= houseNumber %>,<%= pincode %>, <%= city %>, <%= state %>, <%= landmark %>" required>
+          <label class="form-check-label" for="cod"><%= name %>,<%= address %>,<%= houseNumber %>,<%= houseNumber %>, <%= pincode %></label>
+        </div>
+      </div>
+    <% }) %>
+
+    <h4 class="mb-3">Payment</h4>
+    <div>
+        <input type="hidden" value="<%=grandTotal%>" name="grandTotal">
+    </div>
+    
+    <div class="d-block my-3 p-3">
+      <div class="form-check form-check-inline mr-3">
+        <input id="cod" name="paymentMethod" type="radio" class="form-check-input" checked value="cod" required>
+        <label class="form-check-label" for="cod">Cash on Delivery / Pay on delivery</label>
+      </div>
+      <div class="form-check form-check-inline mr-3">
+        <input id="credit" name="paymentMethod" type="radio" class="form-check-input" value="'credit" required >
+        <label class="form-check-label" for="credit">Credit card</label>
+      </div>
+      <div class="form-check form-check-inline mr-3">
+        <input id="debit" name="paymentMethod" type="radio" class="form-check-input" value="'debit" required >
+        <label class="form-check-label" for="debit">Debit card</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" value="paypal" required >
+        <label class="form-check-label" for="paypal">PayPal</label>
+      </div>
+    </div>
+    <button class="btn btn-success btn-lg btn-block col-md-6 mx-auto" type="submit">Checkout</button>
+</form>
+  </div>
+</section>
+
 <%- include('./partials/footer.ejs')  -%>

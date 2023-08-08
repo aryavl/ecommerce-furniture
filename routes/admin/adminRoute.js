@@ -5,6 +5,8 @@ const adminController = require('../../controllers/admin/adminController')
 const userController = require('../../controllers/admin/userController')
 const productController = require('../../controllers/admin/productController')
 const categoryController = require('../../controllers/admin/categoryController')
+const orderController = require('../../controllers/admin/orderController')
+const salesController = require('../../controllers/admin/salesController')
 const adminAuth = require('../../middleware/adminMiddleware')
 const admin_route = express()
 admin_route.use(express.json())
@@ -79,12 +81,26 @@ admin_route.get('/category/edit',categoryController.getCategoryEditModal)
 
 admin_route.post('/category/edit',categoryController.postCategoryListEdit)
 
-// category add
-
-
 admin_route.get('/delete',categoryController.getCategoryDelete)
 
 admin_route.post('/search',categoryController.getSearch)
+
+// order management
+admin_route.get('/order',adminAuth.isAdminLoggedIn,orderController.getOrderList)
+
+// order details
+admin_route.get('/order/admindetails',adminAuth.isAdminLoggedIn,orderController.getOrderDetails)
+// cancel order 
+admin_route.post('/cancelOrder',orderController.postCancelOrder)
+
+
+// admin_route.get('/orderUpdate',adminAuth.isAdminLoggedIn,orderController.getOrderUpdate)
+
+admin_route.post('/orderUpdate',orderController.postOrderUpdate)
+
+// sales report
+
+admin_route.get('/sales-report',salesController.getSalesReport)
 
 
 admin_route.get("/logout",(req,res)=>{

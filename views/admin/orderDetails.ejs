@@ -1,0 +1,40 @@
+<%-include('adminNavbar')%>
+<div class="container mt-5">
+    <h1>Order Details</h1>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Order Information</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Address:</strong> <%= orderDetails[0].address %></p>
+            <p><strong>Name:</strong> <%= orderDetails[0].name %></p>
+            <p><strong>Order Status:</strong> <%= orderDetails[0].orderStatus %></p>
+            <p><strong>Total Amount:</strong> <%= orderDetails[0].totalAmount %></p>
+            <p><strong>Purchase Date:</strong> <%= orderDetails[0].purchaseDate.toLocaleDateString() %></p>
+            <p><strong>Delivery Date:</strong> <%= orderDetails[0].deliveryDate  %></p>
+            <p><strong>Payment Method:</strong> <%= orderDetails[0].paymentMethod %></p>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2>Order Items</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                <% for (let i = 1; i < orderDetails.length; i++) { %>
+                    <li class="list-group-item">
+                        <strong>Product Name:</strong> <%= orderDetails[i].productName %>,
+                        <strong>Quantity:</strong> <%= orderDetails[i].quantity %>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+</html>

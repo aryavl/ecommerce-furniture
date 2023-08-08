@@ -97,12 +97,12 @@
                                     </div>
                                     <% } %>
                                 <div class="wrap-num-product flex-w m-r-20 m-tb-10">
-                                    <input class="mtext-104 cl3 txt-center num-product" type="hidden" name="pdtname" value="<%= product.productName %>">
+                                    <input class="mtext-104 cl3 txt-center num-product" type="hidden" name="pdtname" value="<%= product.productName %> data-item-id="<%= product.stock %>"">
                                     <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
                                         <i class="fs-16 zmdi zmdi-minus"></i>
                                     </div>
 
-                                    <input id="count" class="mtext-104 cl3 txt-center num-product" type="number" name="count" value="1">
+                                    <input id="count" class="mtext-104 cl3 txt-center num-product" type="number" name="count" value="1" min="1" max="<%= product.stock %>">
                                     
 
                                     <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">

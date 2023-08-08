@@ -1,0 +1,72 @@
+<%-include('adminNavbar')%>
+<div class="d-flex " style=" width: 80%; margin-left: 25px; justify-content: space-between;">
+    <h3 class="mb-5 mt-5 ml-5">Orders</h3>
+    <!-- <a href="/admin/addproduct" class="btn btn-outline-primary" style="height: 40px; width: 200px; margin-top: 35px;">Add New Product</a> -->
+  </div>
+
+  <% if (locals.message) { %>
+    <div class="alert alert-danger">
+      <strong><%= message %> </strong>
+    </div>
+  <% } %> 
+    <% let orderId %>
+    <div class="d-flex">
+    <form action="/admin/order/search" method="get" class="d-flex ms-2 me-2" role="search" >
+        <input class="form-control me-2" type="text" placeholder="Search Order" id="search" name="search">
+        <button class="btn btn-outline-primary" type="submit" value="Search">Search</button>
+    </form>
+  </div>
+
+    <table class="table table-bordered table-hover table-striped" style="text-align: center;">
+      <thead class="thead-dark">
+        <tr>
+          <th  scope="col">OrderID</th>
+          <th  scope="col">Client Name</th>
+          
+          <th scope="col">Order Amount</th>
+          <th scope="col">Payment Method</th>
+          <th scope="col">Order date</th>
+          <th scope="col"></th>
+  
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if(locals.orders){ %>
+
+        <% orders.forEach((detail)=>{ %>
+       <% orserId=detail.orderId %>
+          <tr class="word-wrap">
+            <td class="word-wrap"> <%=detail.orderId %></td>
+            <td class="text-capitalize"><%=detail.user.name %> </td>
+            
+            <td>&#8377; <%=detail.totalAmount %></td>
+            <td> <%=detail.paymentMethod %></td>
+            <td> <%= detail.purchaseDate.toLocaleDateString() %></td>
+            <td>
+              <button data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary update" style="margin-left: 5px;" >Update</button>
+              <%if(detail.orderStatus === 'delivered'){%>
+              <button disabled data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary cancel" style="margin-left: 5px;">Cancel</button>
+              <% }else{ %>
+                <button  data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary cancel" style="margin-left: 5px;">Cancel</button>
+                <% } %>
+              <a href="/admin/order/admindetails?id=<%=detail.orderId%>" class="btn btn-outline-primary" style="margin-left: 5px;">Details</a>
+            </td>
+          </tr>
+          <% }) %>
+          <% }else{ %>
+            <h2>No orders </h2>
+            <a href="/">Shop</a>
+            <% } %>
+      </tbody>
+    </table>
+
+    <div class="align-items-center">
+<nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+
+</nav>
+</div> 
+
+
+</body>
+</html>

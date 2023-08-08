@@ -1,4 +1,183 @@
 <%-include('adminNavbar')%>
+<div class="d-flex " style=" width: 80%; margin-left: 25px; justify-content: space-between;">
+    <h3 class="mb-5 mt-5 ml-5">Orders</h3>
+    <!-- <a href="/admin/addproduct" class="btn btn-outline-primary" style="height: 40px; width: 200px; margin-top: 35px;">Add New Product</a> -->
+  </div>
 
+  <% if (locals.message) { %>
+    <div class="alert alert-danger">
+      <strong><%= message %> </strong>
+    </div>
+  <% } %> 
+    <% let orderId %>
+    <div class="d-flex">
+    <form action="/admin/order/search" method="get" class="d-flex ms-2 me-2" role="search" >
+        <input class="form-control me-2" type="text" placeholder="Search Order" id="search" name="search">
+        <button class="btn btn-outline-primary" type="submit" value="Search">Search</button>
+    </form>
+  </div>
+
+    <table class="table table-bordered table-hover table-striped" style="text-align: center;">
+      <thead class="thead-dark">
+        <tr>
+          <th  scope="col">OrderID</th>
+          <th  scope="col">Client Name</th>
+          <th scope="col">Order status</th>
+          <th scope="col">Order Amount</th>
+          <th scope="col">Payment Method</th>
+          <th scope="col">Order date</th>
+          <th scope="col"></th>
+  
+        </tr>
+      </thead>
+
+      <tbody>
+        <% if(locals.orders){ %>
+
+        <% orders.forEach((detail)=>{ %>
+       <% orserId=detail.orderId %>
+          <tr class="word-wrap">
+            <td class="word-wrap"> <%=detail.orderId %></td>
+            <td class="text-capitalize"><%=detail.user.name %> </td>
+            <td style="width:15em">
+                
+                  <div class="progress">
+                    <% if(detail.orderStatus === 'pending'){%>
+                      <div class="progress-bar bg-warning" data-orderid="<%= detail.orderId %>" role="progressbar" style="width:25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                      <% } else if(detail.orderStatus === 'processing'){%>
+                        <div class="progress-bar bg-primary" data-orderid="<%= detail.orderId %>" role="progressbar" style="width:50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        <% }  else if(detail.orderStatus === 'delivered'){%>
+                          <div class="progress-bar bg-success" data-orderid="<%= detail.orderId %>" role="progressbar" style="width:100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                          <% }else if(detail.orderStatus === 'cancel'){%>
+                            <div class="progress-bar bg-danger" data-orderid="<%= detail.orderId %>" role="progressbar" style="width:100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            <% }else{ %>
+                            <div class="progress-bar" role="progressbar" data-orderid="<%= detail.orderId %>"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            <% } %>
+                  </div>
+            </td>
+            <td>&#8377; <%=detail.totalAmount %></td>
+            <td> <%=detail.paymentMethod %></td>
+            <td> <%= detail.purchaseDate.toLocaleDateString() %></td>
+            <td>
+              <button data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary update" style="margin-left: 5px;" >Update</button>
+              <%if(detail.orderStatus === 'delivered'){%>
+              <button disabled data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary cancel" style="margin-left: 5px;">Cancel</button>
+              <% }else{ %>
+                <button  data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary cancel" style="margin-left: 5px;">Cancel</button>
+                <% } %>
+              <a href="/admin/order/admindetails?id=<%=detail.orderId%>" class="btn btn-outline-primary" style="margin-left: 5px;">Details</a>
+            </td>
+          </tr>
+          <% }) %>
+          <% }else{ %>
+            <h2>No orders </h2>
+            <a href="/">Shop</a>
+            <% } %>
+      </tbody>
+    </table>
+
+    <div class="align-items-center">
+<nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+
+</nav>
+</div> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+document.querySelectorAll('.update').forEach(button => {
+  button.addEventListener('click', function() {
+    // Get the selected value
+    let orderId = this.getAttribute('data-orderid');
+    
+    console.log(orderId);
+   
+    // You can now use the selectedValue in your script as needed.
+    // For example, you can use it to perform some action or make an AJAX request.
+    $.ajax({
+  method: 'POST',
+  url: '/admin/orderUpdate',
+  data: { orderId: orderId },
+  success: function(response) {
+    console.log("AJAX POST request to /test-post was successful!");
+    console.log("Response:", response);
+    
+    const progressBar = document.querySelector(`.progress-bar[data-orderid="${orderId}"]`);
+    console.log(progressBar);
+    
+    let processingPercentage = 0; // Initialize progress
+    let backgroundColor = ''; // Initialize background color
+    
+    if (response.status === "processing") {
+      processingPercentage = 50; // Processing status, set progress to 50%
+      backgroundColor = 'blue'; // Change color to blue
+      alert("processing")
+    } else if (response.status === "delivered") {
+      processingPercentage = 100; // Delivered status, set progress to 100%
+      backgroundColor = 'green'; // Change color to green
+      alert("delivered")
+
+    }
+
+    // Update progress bar
+    progressBar.style.width = processingPercentage + "%";
+    progressBar.setAttribute('aria-valuenow', processingPercentage);
+    progressBar.style.backgroundColor = backgroundColor;
+  },
+      error: function(error) {
+        console.error("AJAX POST request to /test-post failed:", error);
+      }
+    });
+  });
+});
+document.querySelectorAll('.cancel').forEach(button => {
+  button.addEventListener('click', function() {
+    // Get the selected order ID
+    let orderId = this.getAttribute('data-orderid');
+    
+    console.log("Cancel button clicked for order ID:", orderId);
+
+    // Here you can perform the cancel action, like making an AJAX request.
+    // For example:
+    $.ajax({
+      method: 'POST',
+      url: '/admin/cancelOrder',
+      data: { orderId: orderId },
+      success: function(response) {
+        console.log("Order canceled successfully!", response);
+
+        // Update UI or take further actions for all progress bars
+        document.querySelectorAll(`.progress-bar[data-orderid="${orderId}"]`).forEach(progressBar => {
+          let processingPercentage = 0; // Initialize progress
+          let backgroundColor = ''; // Initialize background color
+
+          if (response.status === "cancel") {
+            processingPercentage = 100; // Processing status, set progress to 100%
+            backgroundColor = 'red'; // Change color to red
+          }
+          
+
+          progressBar.style.width = processingPercentage + "%";
+            progressBar.setAttribute('aria-valuenow', processingPercentage);
+            progressBar.style.backgroundColor = backgroundColor;
+          alert(response.message)
+            // Disable the cancel button when status is "delivered"
+            if (response.status === "delivered") {
+              const cancelButtons = document.querySelectorAll(`.cancel[data-orderid="${orderId}"]`);
+              cancelButtons.forEach(cancelButton => {
+                cancelButton.disabled = true;
+              });
+            }
+          });
+      },
+      error: function(error) {
+        console.error("Failed to cancel order:", error);
+      }
+    });
+  });
+});
+});
+</script>
 </body>
 </html>

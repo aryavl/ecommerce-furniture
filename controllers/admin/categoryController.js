@@ -6,8 +6,14 @@ const User = require('../../model/userModel');
 module.exports.getCategoryList=async(req,res)=>{
     try{
 
-        const cat =await Category.find({})
-       
+        
+        const cat = await Category.aggregate([
+            {
+              $match: {
+                isList: true
+              }
+            }
+          ]);
         if(cat){
             res.render('categoryManagement',{categories:cat})
         }
@@ -18,7 +24,9 @@ module.exports.getCategoryList=async(req,res)=>{
 module.exports.getCategoryDelete = async(req,res)=>{
     try{
         const id = req.query.id
-        await Category.deleteOne({_id:id})
+            
+        await Category.findOneAndUpdate({_id:id},{$set:{isList:false}})
+
         res.redirect('/admin/category')
     }catch(err){
         console.error(err);

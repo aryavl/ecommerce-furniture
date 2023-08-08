@@ -20,6 +20,10 @@ const categorySchema = new mongoose.Schema({
         type:Number,
         default:0
     },
+    isList:{
+        type:Boolean,
+        default:true,
+    }
     // products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
     
     

@@ -80,6 +80,7 @@ function decrementCount(prdId,count){
         axiosFetching(prdId,count)
       }
 }
+
 function axiosFetching(prdId,count){
     $.ajax({
         method: 'POST',

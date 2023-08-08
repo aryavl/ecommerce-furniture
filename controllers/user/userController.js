@@ -23,12 +23,50 @@ module.exports.getHome=async(req,res)=>{
     try{
         // console.log("home",req.session);
         const user =await User.findOne({email:req.session.userId})
-        const products = await Products.find({})
-    
-        const categories = await Category.find({})
-            console.log("hi guest home");
+        // const products = await Products.find({})
+        const products = await Products.aggregate([
+            {
+              $match: {
+                isList: true
+              }
+            }
+          ]);
+          const productsWithCategory = await Products.aggregate([
+            {
+              $match: {
+                isList: true
+              }
+            },
+            {
+              $lookup: {
+                from: 'Category', // Replace 'Categories' with your actual collection name
+                localField: 'category',
+                foreignField: '_id', // Assuming categoryid refers to the _id field in the Categories collection
+                as: 'categoryDetails'
+              }
+            }
+          ]);
 
-        res.render('home',{user:user,products:products,category:categories})
+        //   console.log(productsWithCategory);
+        // products.forEach(item=>{
+        //     console.log( item.category);
+        // })
+  const productss= await Products.find({isList:true})
+  .populate('category') // Assuming you have a reference to category in your Product schema
+  
+
+        // const categories = await Category.find({})
+        const categories = await Category.aggregate([
+            {
+              $match: {
+                isList: true
+              }
+            }
+          ]);
+          
+            console.log(productss);
+
+        res.render('home',{user:user,products:productss,category:categories})
 
       //  const isUserHasCart= await User.findOne({email:req.session.userId},{cart:1})
         // console.log("cartlength",isUserHasCart.cart.length);
@@ -66,7 +104,7 @@ module.exports.getCart=async(req,res)=>{
         if (req.session.userId) {
 
           const user = await User.findOne({ email: req.session.userId }, { cart: 1, _id: 0 });
-      
+    //   console.log(user);
           if (user) {
             const cartData = await getCartItems(user);
     //   [{count,product}]
@@ -269,7 +307,8 @@ module.exports.postResetPassword=async(req,res)=>{
 
 module.exports.getProfile= async(req,res)=>{
     try{
-        res.render('profile')
+        const user =await User.findOne({email:req.session.userId})
+        res.render('profile',{userdata:user,user:user})
     }catch(err){
         console.error("getProfile",err.message);
     }
@@ -329,5 +368,21 @@ module.exports.updateCart = async(req,res)=>{
                
     }catch(err){
         console.error("updateCart",err.message);
+    }
+}
+
+module.exports.getCartDelete=async(req,res)=>{
+    try{
+        const prdtId =req.query.id
+       
+                const result = await User.updateOne(
+                  { email: req.session.userId }, 
+                  { $pull: { 'cart': { productId: prdtId } } }
+                  );
+                  res.redirect('/cart')
+                // console.log(user.cart);
+         
+    }catch(err){
+        console.error("cartDelete",err.message);
     }
 }

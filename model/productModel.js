@@ -30,6 +30,10 @@ const productSchema = new mongoose.Schema({
     },
     discount:{
         type:String
+    },
+    isList:{
+        type:Boolean,
+        default:true,
     }
 })
 

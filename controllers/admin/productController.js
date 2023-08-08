@@ -6,7 +6,14 @@ const Products = require('../../model/productModel');
 module.exports.getProductList=async(req,res)=>{
     try{
 
-        const pdt =await Products.find({})
+        const pdt = await Products.aggregate([
+            {
+              $match: {
+                isList: true
+              }
+            }
+          ]);
+        // console.log(pdt);
         if(pdt){
             res.render('productManagement',{products:pdt})
         }
@@ -64,14 +71,13 @@ module.exports.getEditProduct = async(req,res)=>{
         const id = req.query.id
         const product=await Products.findOne({_id:id})
         // console.log((product._id).toString());
-        let pdtid=product._id.toString()
-        let cat
-         await Category.find({_id:product.category}).then(data=>data.forEach(item=>{cat=item.categoryName}))
-        //  console.log(cat);
+        let pdtid=product.category.toString()
+        let cat=await Category.findOne({_id:product.category},{categoryName:1})
+        //  console.log("pdt",pdtid);
        
-        const categories = await Category.find({},{categoryName:1});
-        //  console.log(product);
-        res.render('editProduct',{product:product,categoryName:cat,pdtid,categories:categories})
+        const categories = await Category.find({},);
+        //   console.log(cat.categoryName);
+        res.render('editProduct',{product:product,categoryName:cat.categoryName,pdtid,categories:categories})
        }catch(err){
         console.error("getEditProduct",err.message);
        }
@@ -96,22 +102,38 @@ module.exports.deleteImages = async (req,res) => {
 module.exports.postEditProduct=async(req,res)=>{
     const price= Number(req.body.price)
     const stock = Number(req.body.stock)
-    
+    // console.log("post0",req.body);
     try{
         const pdtId = req.body.productIdentity
+
         const arrImages = [];
         for (let i = 0; i < req.files.length; i++) {
         arrImages[i] = req.files[i].filename;
     }
-    const imgs = await Products.find({_id:pdtId},{images:1})
-    console.log(imgs);
+    const imgs = await Products.find({_id:pdtId},{images:1,_id:0})
+    if(imgs.length>0){
+
+        const [{images}]=imgs
+        // console.log("alred",images);
+        images.forEach(item=>{
+            arrImages.push(item)
+        })
+    }
+    // arrImages.push(imgsList)
+    // console.log("imgsList",imgsList);
+    console.log("arrImages",arrImages);
+    
+    const filterImages= arrImages.filter((item, index) =>{return arrImages.indexOf(item) === index});
+    console.log("filterImages",filterImages);
+    const catId = await Category.findOne({categoryName:req.body.selectcategory},{_id:1})
+    // console.log(catId);
         let data = await Products.updateOne({_id : pdtId},{$set : {productName: req.body.productName,
             price: price,
             stock: stock,
             description: req.body.description,
             discount: req.body.discount,
             category: req.body.category,
-            images:arrImages
+            images:filterImages
         }});
             
         res.redirect('/admin/products')
@@ -127,7 +149,7 @@ module.exports.getProductDelete = async(req,res)=>{
 
         const product = await Products.findOne({_id:id})
         await Category.findOneAndUpdate({_id:product.category}, { $inc: { quantity: -1 } })
-        await Products.deleteOne({_id:id})
+        await Products.findOneAndUpdate({_id:id},{$set:{isList:false}})
         res.redirect('/admin/products')
     }catch(err){
         console.error("getProductDelete",err.message);

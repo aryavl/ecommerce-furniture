@@ -3,6 +3,10 @@ const userAuth = require('../../middleware/userMiddleware')
 const user_route = express()
 const userController = require('../../controllers/user/userController')
 const productDetailController = require('../../controllers/user/productDetailController')
+const addressController = require('../../controllers/user/addressController')
+const orderController = require('../../controllers/user/orderController')
+const productController = require('../../controllers/user/productContoller')
+const filterCatController = require('../../controllers/user/filterCatController')
 
 
 user_route.set("views", "./views/user")
@@ -44,33 +48,44 @@ user_route.get('/product-detail',productDetailController.getProductDetail)
 
 user_route.post('/product-detail', productDetailController.postCartItem);
 
-user_route.get('/profile',userController.getProfile)
-
-// post cart field to User collection
-// to redirect to product detail when a product is added to cart
-// user_route.post('/product-detail',productDetailController.postCartItem)
-
-
-
 user_route.post('/add-to-cart',productDetailController.postAddTocart)
 
-user_route.get('/products',productDetailController.getProductList)
 
-user_route.get('/address',productDetailController.getAddress)
+
+// address managment
+user_route.get('/address',addressController.getAddress)
+
+user_route.post('/address',addressController.postAddress)
+
+user_route.get('/editaddress',addressController.getEditAddress)
+
+user_route.post('/editaddress',addressController.postEditAddress)
+
+user_route.get('/deleteaddress',addressController.deleteAddress)
 
 user_route.get('/checkout',productDetailController.getCheckout)
 
-user_route.get('/confirm-order',productDetailController.getConfirmOrder)
+user_route.post('/checkout',productDetailController.postCheckout)
+
+user_route.get('/confirm-order',userAuth.isCheckout,productDetailController.getConfirmOrder)
 
 user_route.get('/cart',userController.getCart)
 
+user_route.post('/cart',userController.postCart)
+
+user_route.get('/cartDelete',userController.getCartDelete)
+
+// profile managment
+user_route.get('/profile',userController.getProfile)
 
 // update Cart Quantity
 user_route.post('/updateQuantity',userController.updateCart)
-user_route.post('/cart',userController.postCart)
-
-
-  
+//  Order management
+user_route.get('/orders',orderController.getOrders)
+// all product
+user_route.get('/product',productController.getProducts)
+// filter categories on home page
+user_route.get('/filter-cat',filterCatController.getFilterCat)
 
 
 
