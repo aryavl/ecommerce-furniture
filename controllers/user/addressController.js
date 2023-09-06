@@ -65,20 +65,22 @@ module.exports.getEditAddress = async (req, res) => {
   module.exports.postEditAddress = async(req,res)=>{
     try{
       
-        const id = req.body.id
+        const id = req.query.id
         const user = await User.findOne({email:req.session.userId})
         const address=user.address.items
-        const foundObject = address.find(obj => obj._id.toString() === id);
-        foundObject.name=req.body.name
-        foundObject.phone=req.body.phone
-        foundObject.houseNumber=req.body.houseNumber
-        foundObject.pincode=req.body.pincode
-        foundObject.address=req.body.address
-        foundObject.city=req.body.city
-        foundObject.state=req.body.state
-        foundObject.landmark=req.body.landmark
-        foundObject.alternatePhone=req.body.alternatePhone
-         await user.save();
+        console.log(address[0]._id.toString() === id);
+        // const foundObject = address.find(obj => obj._id.toString() === id);
+     
+        // foundObject.name=req.body.name
+        // foundObject.phone=req.body.phone
+        // foundObject.houseNumber=req.body.houseNumber
+        // foundObject.pincode=req.body.pincode
+        // foundObject.address=req.body.address
+        // foundObject.city=req.body.city
+        // foundObject.state=req.body.state
+        // foundObject.landmark=req.body.landmark
+        // foundObject.alternatePhone=req.body.alternatePhone
+        //  await user.save();
         res.redirect('/editaddress')
       
     }catch(err){

@@ -1,3 +1,4 @@
+const Banner = require("../../model/bannerModel");
 const Category = require("../../model/categoryModel");
 const Products = require("../../model/productModel");
 const User = require("../../model/userModel");
@@ -63,10 +64,17 @@ module.exports.getHome=async(req,res)=>{
               }
             }
           ]);
+          const banner = await Banner.aggregate([
+            {
+              $match: {
+                isList: true
+              }
+            }
+          ]);
           
             console.log(productss);
 
-        res.render('home',{user:user,products:productss,category:categories})
+        res.render('home',{user:user,products:productss,category:categories,banner})
 
       //  const isUserHasCart= await User.findOne({email:req.session.userId},{cart:1})
         // console.log("cartlength",isUserHasCart.cart.length);
@@ -90,12 +98,16 @@ module.exports.getCart=async(req,res)=>{
 
     const getCartItems = async (user) => {
         const cartData = [];
+        
         for (const item of user.cart) {
         const user =await User.findOne({email:req.session.userId})
           const product = await Products.findOne({ _id: item.productId });
           if (product) {
-            cartData.push({user:user, count: item.count, product: product });
+            let total = item.count * product.price;
+            cartData.push({user:user, count: item.count, product: product,total:total });
           }
+       
+
         }
         return cartData;
       };
@@ -105,14 +117,22 @@ module.exports.getCart=async(req,res)=>{
 
           const user = await User.findOne({ email: req.session.userId }, { cart: 1, _id: 0 });
     //   console.log(user);
+    let sub
           if (user) {
             const cartData = await getCartItems(user);
-    //   [{count,product}]
+            let totalArr=[]
+            cartData.map(item=>{
+                totalArr.push(item.total)
+            })
+            if(totalArr.length!==0){
+                 sub=totalArr.reduce((acc,sum)=>{return acc+sum})
+            }
+          
             const uniqueCartItems = cartData.filter((item, index, self) =>
               index === self.findIndex(t => t.product && t.product._id.equals(item.product._id))
             );
-      
-            res.render('cart', { user:user,cartItem: uniqueCartItems });
+           
+            res.render('cart', { user:user,cartItem: uniqueCartItems,subTotal:sub });
           } else {
             console.error("getCart: User not found");
             return res.status(404).send("User not found");
@@ -141,6 +161,7 @@ module.exports.postLogin = async(req,res)=>{
                res.render('login',{message:"You are blocked"})
                }else{
                 req.session.userId = user.email
+                req.session.role = 'user'
                 res.redirect('/')
                
                }
@@ -322,44 +343,56 @@ module.exports.postCart=async(req,res)=>{
     }
 }
 module.exports.updateCart = async(req,res)=>{
-   
+    const getCartItems = async (user) => {
+        const cartData = [];
+        
+        for (const item of user.cart) {
+        const user =await User.findOne({email:req.session.userId})
+          const product = await Products.findOne({ _id: item.productId });
+          if (product) {
+            let total = item.count * product.price;
+           
+            cartData.push({user:user, count: item.count, product: product,total:total });
+          }
+       
+
+        }
+        return cartData;
+      };
     try{
         const { productId, count } = req.body;
-        console.log("Message received from frontend:", productId, count, req.session.userId);
+        // console.log("Message received from frontend:", productId, count, req.session.userId);
+        
         
         const product = await Products.findOne({ _id: productId });
         
-        if (req.session.userId) {
-          const user = await User.findOne({ email: req.session.userId }, { cart: 1, _id: 0 });
-          let data = user;
-          let { cart } = data;
-
         
-          let found = false;
+        let indTotal
         
-          for (const item of cart) {
-            const { productId } = item;
-            if (productId === req.body.productId) {
-              found = true;
-              break;
-            }
-          }
-        
-          if (found) {
+          if (product) {
             if(count>product.stock){
-                res.send(JSON.stringify({message: "Out of Stock",exceed:true }));
+                return res.status(400).json({ success: false });
             }else{
+                 indTotal = count * product.price
+                
                 await User.updateOne(
                     { email: req.session.userId, "cart.productId": req.body.productId },
                     { "cart.$.count": parseInt(count)  } // Increment the count by the given value
                   );
                 
-                res.send(JSON.stringify({message: "quantity incremented",exceed:false }))
+                  const user = await User.findOne({ email: req.session.userId }, { cart: 1, _id: 0 });
+                  let sub
+                  if (user) {
+                    const cartData = await getCartItems(user);
+                    let totalArr=[]
+                    cartData.map(item=>{
+                        totalArr.push(item.total)
+                    })
+                     sub=totalArr.reduce((acc,sum)=>{return acc+sum})
+                    // console.log(sub);
+                }
+                return res.status(200).json({ success: true ,indTotal:indTotal,count:count,productId:productId,subTotal:sub});
             }
-           
-          } 
-           
-           
           
         }
         else if(req.session.userId === undefined){

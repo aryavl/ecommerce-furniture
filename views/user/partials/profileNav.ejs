@@ -70,6 +70,18 @@
                         <li>
                             <a href="/orders">Orders</a>
                         </li>
+                        <li>
+                            <a href="/orders">Wallet</a>
+                        </li>
+                        <div class="dropdown">
+                            <a  href="#" class="text-capitalize text-dark dropdown-toggle font-weight-normal underline" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Wallet
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <!-- Dropdown content goes here -->
+                                <a class="dropdown-item" href="#" class="gap-1 text-capitalize">&#8377; <%= user.wallet %></a>
+                            </div>
+                        </div>
 
                        
                     </ul>

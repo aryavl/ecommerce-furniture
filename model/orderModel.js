@@ -5,21 +5,37 @@ const orderSchema = new mongoose.Schema({
         type : String,
         required : true
     },
-    
     user:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User'
         
     },
-    
-    orderStatus : {
-        type : String,
-       
-        default : "pending"
-    },
     orderItems : {
-        type : Array,
+        type : [
+            {
+                product_id: mongoose.Schema.Types.ObjectId,
+                quantity: Number,
+                orderStatus : {
+                    type : String,
+                    default : "pending"
+                }
+            }
+        ],
         required : true
+    },
+    orderCancleRequest: {
+        type: Boolean,
+        default: false
+    },
+    orderCancelReason:{
+        type:String
+    },
+    orderReturnRequest: {
+        type: Boolean,
+        default: false
+    },
+    orderReturnReason:{
+        type: String
     },
     totalAmount : {
         type : Number,
@@ -37,10 +53,6 @@ const orderSchema = new mongoose.Schema({
     },
     address:{
         type:String,
-    },
-    isList:{
-        type:Boolean,
-        default:true,
     }
 })
 

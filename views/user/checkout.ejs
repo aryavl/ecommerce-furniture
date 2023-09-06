@@ -9,22 +9,21 @@
           <div class="card-header py-3">
             <h5 class="mb-0">Order Summary</h5>
           </div>
-          <form action="" method="post">
+  
           <div class="card-body">
-            <% const subtotal=[] %>
+            
             <% productData.forEach((item) => { %>
-            <% const total = item.product.price * item.count %>
-            <% subtotal.push(total) %>
+           
             <div class="row mb-3">
               <div class="col-md-6">
                 <p class="text-capitalize"><strong><%= item.product.productName %></strong></p>
                 <h6 class="mb-0">Price: &#8377;<%= item.product.price %></h6>
                 <h6 class="mb-0">Quantity: <%= item.count %></h6>
-                <p class="mb-0">Total: &#8377;<%= total %></p>
+                <p class="mb-0">Total: &#8377;<%=item.total %></p>
               </div>
             </div>
+            
             <% }) %>
-            <% const grandTotal = subtotal.reduce((acc, curr) => acc + curr) %>
           </div>
         </div>
       </div>
@@ -41,7 +40,7 @@
                         <p class="mb-0">(including VAT)</p>
                       </strong>
                     </div>
-                    <h4 class="mb-0 mt-2">&#8377;<%= grandTotal %></h4>
+                    <h4  class="mb-0 mt-2">&#8377; <span id="grand"><%=total %></span</h4>
                   </div>
                 </div>
               </div>
@@ -50,6 +49,7 @@
         </div>
       </div>
     </div>
+  
     <h4 class="mb-3">Address</h4>
     <div class="d-block my-3 p-3">
       <a href="/address" class="btn btnStyle">Add Address here </a>
@@ -59,38 +59,126 @@
       <% const { name, address, phone, houseNumber, pincode, city, state, landmark, alternatePhone } = item; %>
       <div class="d-block my-3 p-3">
         <div class="form-check form-check-inline mr-3">
-          <input id="cod" name="address" type="radio" class="form-check-input" checked value="<%= name %>,<%= phone %>,<%= address %>,<%= houseNumber %>,<%= pincode %>, <%= city %>, <%= state %>, <%= landmark %>" required>
+          <input id="cod" name="selectedAddress" type="radio" class="form-check-input" checked value="<%= name %>,<%= phone %>,<%= address %>,<%= houseNumber %>,<%= pincode %>, <%= city %>, <%= state %>, <%= landmark %>" required>
           <label class="form-check-label" for="cod"><%= name %>,<%= address %>,<%= houseNumber %>,<%= houseNumber %>, <%= pincode %></label>
         </div>
       </div>
     <% }) %>
+    <form action="" method="post" id="paymentForm">
 
     <h4 class="mb-3">Payment</h4>
-    <div>
-        <input type="hidden" value="<%=grandTotal%>" name="grandTotal">
-    </div>
+    
     
     <div class="d-block my-3 p-3">
       <div class="form-check form-check-inline mr-3">
         <input id="cod" name="paymentMethod" type="radio" class="form-check-input" checked value="cod" required>
         <label class="form-check-label" for="cod">Cash on Delivery / Pay on delivery</label>
       </div>
-      <div class="form-check form-check-inline mr-3">
-        <input id="credit" name="paymentMethod" type="radio" class="form-check-input" value="'credit" required >
-        <label class="form-check-label" for="credit">Credit card</label>
-      </div>
-      <div class="form-check form-check-inline mr-3">
-        <input id="debit" name="paymentMethod" type="radio" class="form-check-input" value="'debit" required >
-        <label class="form-check-label" for="debit">Debit card</label>
-      </div>
       <div class="form-check form-check-inline">
-        <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" value="paypal" required >
-        <label class="form-check-label" for="paypal">PayPal</label>
+        <input id="online" name="paymentMethod" type="radio" class="form-check-input" value="online" required >
+        <label class="form-check-label" for="online">Online Payment</label>
       </div>
     </div>
-    <button class="btn btn-success btn-lg btn-block col-md-6 mx-auto" type="submit">Checkout</button>
+    <button class="btn btn-success btn-lg btn-block col-md-6 mx-auto check" type="submit">Checkout</button>
 </form>
   </div>
 </section>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    
+ document.getElementById("paymentForm").addEventListener("submit", function(event) {
+      // Prevent the default form submission
+      event.preventDefault();
+      const total = document.getElementById('grand').innerText
+    // console.log(total);
+      // Get all radio buttons with the name "paymentMethod"
+      let paymentMethodRadios = document.getElementsByName("paymentMethod");
+      
+      let paymentMode = document.querySelector('input[name="paymentMethod"]:checked').value;
+       console.log(paymentMode); //i think it is no use
+            
+      const address = document.querySelector('input[name="selectedAddress"]:checked').value;
 
+
+      
+      // Loop through the radio buttons to find the selected one
+      for (let i = 0; i < paymentMethodRadios.length; i++) {
+        // console.log(paymentMethodRadios[i].value);
+        if (paymentMethodRadios[i].checked) {
+          // Print the value of the selected radio button
+          // console.log("Selected Payment Method: " + paymentMethodRadios[i].value)
+          // break; // Exit the loop once a selected radio button is found
+          if(paymentMethodRadios[i].value === 'online'){
+            $.ajax({
+      url: '/createOrder',
+      method: 'POST',
+      dataType: 'json',
+      data:{paymentMode,total,address},
+      success: function(order) {
+      
+        var options = {
+          key: 'rzp_test_uKPAxKHe2Wj7CW',
+          amount: order.amount,
+          currency: order.currency,
+          name: 'Meubles',
+          description: 'Test Payment',
+          order_id: order.id,
+          handler: function(response) {
+            $.ajax({
+              url: '/checkout',
+              method: 'POST',
+              data:{paymentMode,total,address},
+              success: function(data) {
+                if (data.success) {
+                  alert('Payment successful!');
+                  window.location.href = "/confirm-order"; 
+                } else {
+                  alert('Payment failed!');
+                }
+              },
+              error: function() {
+                alert('Error verifying payment.');
+              }
+            });
+          }
+        };
+
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+        
+      },
+      error: function() {
+        alert('Error creating order.');
+      }
+    });
+    
+          }
+                   if(paymentMethodRadios[i].value === 'cod'){
+          console.log('codeee');
+          $.ajax({
+              url: '/checkout',
+              method: 'POST',
+              data:{paymentMode,total,address},
+              success: function(data) {
+                console.log(data);
+                if (data.success) {
+                  alert('Payment successful!');
+                  window.location.href = "/confirm-order"; 
+                } else {
+                  alert('Payment failed!');
+                }
+              },
+              error: function() {
+                alert('Error verifying payment.');
+              }
+            });
+        }
+          
+        }
+
+      
+    }
+      // console.log(paymentMode);
+    });
+</script>
 <%- include('./partials/footer.ejs')  -%>

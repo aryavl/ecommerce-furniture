@@ -1,0 +1,16 @@
+<%- include('./partials/header.ejs')  -%>
+<%- include('./partials/navbar.ejs')  -%>
+
+<div class="d-flex align-items-center justify-content-center vh-100 mt-5 pt-5">
+
+  <div class="text-center">
+    <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 24 24" fill="#dc3545">
+      <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 21c-5.25 0-9-3.75-9-9s3.75-9 9-9 9 3.75 9 9-3.75 9-9 9zM11 7h2v2h-2zm0 4h2v6h-2z"/>
+    </svg>
+    <h1 class="display-4 text-danger mt-4">Error</h1>
+    <p class="lead"><%= message %></p>
+  </div>
+</div>
+
+
+<%- include('./partials/footer.ejs')  -%>

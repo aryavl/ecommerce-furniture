@@ -199,7 +199,8 @@
                         </div>
                             <div class=" d-flex justify-content-between">
                                 <div class="btn-group">
-                                    <a class="btn btnStyle mr-2" href="/editaddress?id=<%= address._id %>">Edit</a>
+                                    <!-- <a class="btn btnStyle mr-2" href="/editaddress?id=<%= address._id %>">Edit</a> -->
+                                    <button class="btnStyle" onclick="editAddress('<%= JSON.stringify(address)  %>')">Edit</button>
                                     <a class="btn btn-danger" href="/deleteaddress?id=<%= address._id %>">Delete</a>
                                 </div>
                             </div>
@@ -210,6 +211,172 @@
                 <% }) %>
             <%}%>
         </div>
+
 </main>
+<div class="container mt-5" id="editAddressForm" style="display: none;">
+  <div class="row justify-content-center">
+      <div class="col-md-6">
+          <div class="text-center pt-5" id="login">
+              <div class="container border py-5">
+                  <div class="title">
+                      <h2 class="font-weight-bold">Edit Address</h2>
+                  </div>
+                  <form action="" method="post">
+                      <% if(locals.message){ %>
+                      <div>
+                          <p class="text-danger"><%= message %></p>
+                      </div>
+                      <% } %>
+
+                      <div class="card-body">
+                         
+                          <div class="row align-items-center py-3">
+                              <div class="col-md-3 ps-5">
+
+                                  <h6 class="mb-0">Name</h6>
+
+                              </div>
+                              <div class="col-md-9 pe-5">
+
+                                  <input type="text" class="form-control form-control-lg" name="name" />
+
+                              </div>
+                          </div>
+
+                          <hr class="mx-n3">
+
+                          <div class="row align-items-center py-3">
+                              <div class="col-md-3 ps-5">
+
+                                  <h6 class="mb-0">Phone</h6>
+
+                              </div>
+                              <div class="col-md-9 pe-5">
+
+                                  <input type="number" class="form-control form-control-lg" name="phone" />
+
+                              </div>
+                          </div>
+
+                          <hr class="mx-n3">
+
+                          <div class="row align-items-center py-3">
+                              <div class="col-md-3 ps-5">
+
+                                  <h6 class="mb-0">House No.</h6>
+
+                              </div>
+                              <div class="col-md-9 pe-5">
+
+                                  <input type="number" class="form-control form-control-lg" name="houseNumber"
+                                  />
+
+                              </div>
+                          </div>
+
+                          <hr class="mx-n3">
+                          <div class="row align-items-center py-3">
+                              <div class="col-md-3 ps-5">
+
+                                  <h6 class="mb-0">Pincode</h6>
+
+                              </div>
+                              <div class="col-md-9 pe-5">
+
+                                  <input type="number" class="form-control form-control-lg" name="pincode"  />
+
+                              </div>
+                          </div>
+
+                          <hr class="mx-n3">
+
+
+
+
+
+                          <div class="row align-items-center py-3">
+                              <div class="col-md-3 ps-5">
+
+                                  <h6 class="mb-0">Address</h6>
+
+                              </div>
+                              <div class="col-md-9 pe-5">
+
+                                  <textarea class="form-control" rows="3" name="address" ></textarea>
+
+                              </div>
+                          </div>
+
+                          <hr class="mx-n3">
+
+                          <div class="row align-items-center py-3">
+                              <div class="col-md-3 ps-5">
+
+                                  <h6 class="mb-0">Landmark</h6>
+
+                              </div>
+                              <div class="col-md-9 pe-5">
+
+                                  <input type="text" class="form-control form-control-lg" name="landmark"  />
+
+                              </div>
+                          </div>
+
+                          <hr class="mx-n3">
+
+                          <div class="row align-items-center py-3">
+                              <div class="col-md-3 ps-5">
+
+                                  <h6 class="mb-0">City</h6>
+
+                              </div>
+                              <div class="col-md-9 pe-5">
+
+                                  <input type="text" class="form-control form-control-lg" name="city"  />
+
+                              </div>
+                          </div>
+
+                          <hr class="mx-n3">
+
+                          <div class="row align-items-center py-3">
+                              <div class="col-md-3 ps-5">
+
+                                  <h6 class="mb-0">State</h6>
+
+                              </div>
+                              <div class="col-md-9 pe-5">
+
+                                  <input type="text" class="form-control form-control-lg" name="state" />
+
+                              </div>
+                          </div>
+
+                          <hr class="mx-n3">
+                          <div class="row align-items-center py-3">
+                              <div class="col-md-3 ps-5">
+
+                                  <h6 class="mb-0">Alternate Phone</h6>
+
+                              </div>
+                              <div class="col-md-9 pe-5">
+
+                                  <input type="number" class="form-control form-control-lg" name="altPhone" />
+
+                              </div>
+                          </div>
+
+                          <hr class="mx-n3">
+                      </div>
+                      
+                          
+                          <button type="submit" class="btn btnStyle">Save changes</button>
+                      
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
 <script src="/asset/js/addressValidation.js"></script>
     <%- include('./partials/footer.ejs')  -%>

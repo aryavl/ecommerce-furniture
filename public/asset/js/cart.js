@@ -6,7 +6,7 @@ document.querySelector('.js-addcart-detail').addEventListener('click', function(
   
     let productId = $(this).data('productid');
     
-    const quantity = $("#count").val();
+    const quantity = 1;
     
  // Your message to be sent to the server
  

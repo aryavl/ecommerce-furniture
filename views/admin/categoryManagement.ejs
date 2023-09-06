@@ -14,7 +14,7 @@
       <!-- <li class="nav-item"> -->
         <!-- <a class="navbar-brand" href="/admin/dashboard">Dashboard</a> -->
         <div class="d-flex">
-        <form action="/admin/category/search" method="get" class="d-flex ms-2 me-2" role="search" >
+        <form action="/admin/category/search" method="post" class="d-flex ms-2 me-2" role="search" >
             <input class="form-control me-2 border-success" type="text" placeholder="Search Category" id="search" name="search">
             <button class="btn btn-success" type="submit" value="Search">Search</button>
         </form> 
@@ -39,7 +39,7 @@
                 <td> <%= check.quantity %></td>
                 <td>
                 <a href="/admin/category/edit?id=<%=check._id%>" class="btn  btn-success">Edit</a>
-                <a href="/admin/category/delete=<%=check._id%>" class="btn btn-danger" style="margin-left: 5px;">Delete</a></td>
+                <a href="/admin/category/delete?id=<%=check._id%>" class="btn btn-danger" style="margin-left: 5px;">Delete</a></td>
               </tr>
               <% }) %>
           </tbody>

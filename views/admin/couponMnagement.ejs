@@ -1,0 +1,82 @@
+<%-include('adminNavbar')%>
+<div class="container mt-5 mb-5 ">
+    <div class="row  ">
+      <div class="col-lg-12 grid-margin stretch-card ">
+        <div class="card g-white shadow">
+          <div class="card-body ">
+            <div class="row d-flex justify-content-between">
+              <div class="col-lg-4">
+                <h4 class="card-title m-4 ">Products List</h4>
+              </div>
+              <div class="col-lg-8 text-end">
+                <div class="row mb-5">
+                    <div class="col ">
+                        <% if(locals.mode){ %>
+                            <a href="/admin/coupon"><button class="btn btn-danger m-4">Listed </button></a>
+                        <% }else{ %>
+                            <a href="/admin/coupons?id='unlisted'"><button class="btn btn-danger m-4">Unlisted </button></a>
+                        <% } %>
+                        <a href="/admin/addcoupon"><button class="btn btn-danger m-4"> Add Coupons</button></a>
+                    </div>
+                </div>
+              </div>
+            </div>
+           <span id="err"></span>
+            <table class="table table-striped pt-4 shadow">
+              <thead class="p-1 shadow" >
+                <tr >
+                  
+                  <th> Name  </th>
+                  <th> Value</th>
+                  <th> Min Value </th>
+                  <th> Max Value </th>
+                  <th> Exp. Date </th>
+                  <th> Edit </th>
+                  <th> Delete </th>
+                  
+                </tr>
+              </thead>
+              <tbody id="body">
+            <% if(locals.couponData){ %>
+
+              <% couponData.forEach((data)=>{ %>
+
+                <tr >
+                 
+                  <td>
+                    
+                    <%= data.couponName %>
+                  </td>
+                  <td>
+                    <%= data.couponValue %>
+                  </td>
+                  <td >
+                    <%= data.minValue %>
+                  </td>
+                  <td>
+                    <%= data.maxValue %>
+                  </td>
+                  <td>
+                    <%= data.expiryDate %>
+                  </td>
+                  <td>
+                    <a href="/admin/editCoupon?id=<%= data._id  %>">
+                        <button class="btn bg-transparent"  >Edit</button>
+                    </a>                  
+                  </td>
+                  <td>
+                    <button class="btn bg-transparent" style="color: red;" onclick="dele('<%= data._id  %>')">Delete</button>
+                  </td>
+                  
+                </tr>
+                <% }) %>
+                  <% } %>
+          </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

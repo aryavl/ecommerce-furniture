@@ -1,59 +1,58 @@
 const Order = require("../../model/orderModel");
 const Products = require("../../model/productModel");
 const User = require("../../model/userModel");
-
+const XLSX = require('xlsx');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 module.exports.getSalesReport=async(req,res)=>{
     try{
-        const orders = await Order.find({orderStatus:'delivered'});
-        // console.log(orders); // [{}]
+     const orders= await Order.aggregate([
+      {
+        $lookup: {
+          from: 'users', // Replace with your actual collection name for users
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $unwind: '$user'
+      },
+        {
+          $unwind: "$orderItems"
+        },
+        {
+          $match: {
+            "orderItems.orderStatus": "delivered"
+          }
+        }
+      ])
+      
+        // const orders = await Order.find({orderStatus:'delivered'});
+        console.log(orders); // [{}]
         const orderList = [];
     
-        for (let i = 0; i < orders.length; i++) {
-          const userId = orders[i].user; // Extract user ID from the order
+       
     
-          // Fetch the user information based on the extracted ID
-          const user = await User.findById(userId);
-            // console.log(user); user data
-          // Extract orderItems from the current order
-          const orderItems = orders[i].orderItems;
-          const processedOrderItems = [];
-    
-          // Process each order item
-          for (let j = 0; j < orderItems.length; j++) {
-            const product = await Products.findById(orderItems[j].product);
-    
-            // Combine product information with quantity
-            const processedOrderItem = {
-              product: product,
-              quantity: orderItems[j].quantity,
-            };
-    
-            processedOrderItems.push(processedOrderItem);
-          }
-    
-          // Combine order details with processed orderItems and user ID
-          const processedOrder = {
-            
-           
-            user: user, // Including the full user object if needed
-            orderId:orders[i].orderId,
-            orderStatus: orders[i].orderStatus,
-            orderItems: processedOrderItems,
-            totalAmount: orders[i].totalAmount,
-            purchaseDate: orders[i].purchaseDate,
-            deliveryDate: orders[i].deliveryDate,
-            paymentMethod: orders[i].paymentMethod,
-          
-          };
-    
-          orderList.push(processedOrder);
-        }
-    
-        // Now, orderList contains processed orders with their associated user IDs and orderItems.
-        // console.log(orderList);
-    
-        res.render('salesReport',{orders:orderList})
+        res.render('salesReport',{orders:orders})
     }catch(err){
         console.error("getSalesReport---->",err.message);
     }
+}
+
+module.exports.postReport=async(req,res)=>{
+  try{
+   console.log(req.body);
+   const day = req.body.day
+   const month = req.body.month
+   const year = req.body.year
+   const selectedValue = req.body.selectedValue
+
+   if(day){
+    const order = await Order.find({})
+    console.log(order);
+   }
+  }catch(err){
+    console.error("postReport ===>",err.message);
+  }
 }

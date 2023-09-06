@@ -1,0 +1,19 @@
+<%- include('./partials/header.ejs')  -%>
+<%- include('./partials/profileNav.ejs')  -%>
+<div class="container mt-5 pt-5">
+    <h2>Choose items to return</h2>
+    <% let total %>
+    <% orderItems.forEach(item=>{%>
+        <label>
+            <input type="checkbox" name="checkboxOption" value="<%=item._id %>">
+            <img src="/asset/uploads/<%=item.product[0].images[0] %>" alt="<%=  item.product[0].productName%>" style="width: 90px; height: 95px;">
+            <div>
+            <% total=item.quantity * item.product[0].price %>
+            <p><%=item.product[0].productName %></p>
+            <p>&#8377; <%=total %></p>
+            </div>
+        </label><br>
+        
+        <% })  %>
+</div>
+<%- include('./partials/footer.ejs')  -%>

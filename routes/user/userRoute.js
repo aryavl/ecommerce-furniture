@@ -7,10 +7,13 @@ const addressController = require('../../controllers/user/addressController')
 const orderController = require('../../controllers/user/orderController')
 const productController = require('../../controllers/user/productContoller')
 const filterCatController = require('../../controllers/user/filterCatController')
-
+const errorHandle = require('../../middleware/errorHandle')
 
 user_route.set("views", "./views/user")
 
+
+// confirm order page or success page
+user_route.get('/confirm-order',productDetailController.getConfirmOrder)
 
 user_route.get('/', userController.getHome)
 
@@ -44,12 +47,11 @@ user_route.post('/resetPassword',userController.postResetPassword)
 
 // product detail
 
-user_route.get('/product-detail',productDetailController.getProductDetail)
+user_route.get('/product-detail',errorHandle.errorHandler,productDetailController.getProductDetail,)
 
 user_route.post('/product-detail', productDetailController.postCartItem);
 
 user_route.post('/add-to-cart',productDetailController.postAddTocart)
-
 
 
 // address managment
@@ -65,13 +67,23 @@ user_route.get('/deleteaddress',addressController.deleteAddress)
 
 user_route.get('/checkout',productDetailController.getCheckout)
 
-user_route.post('/checkout',productDetailController.postCheckout)
 
-user_route.get('/confirm-order',userAuth.isCheckout,productDetailController.getConfirmOrder)
+
+ user_route.post('/checkout',productDetailController.postCheckout)
+//  user_route.post('/cod-checkout',productDetailController.postCodCheckout)
+user_route.post('/success',productDetailController.postCheckout)
+
+user_route.post('/createOrder', orderController.postCreateOrder);
+
+user_route.post('/verifyPayment', orderController.postVerifyPayment);
+
+// return 
+user_route.get('/return',orderController.getReturn)
+
 
 user_route.get('/cart',userController.getCart)
 
-user_route.post('/cart',userController.postCart)
+// user_route.post('/cart',userController.postCart)
 
 user_route.get('/cartDelete',userController.getCartDelete)
 
@@ -82,6 +94,10 @@ user_route.get('/profile',userController.getProfile)
 user_route.post('/updateQuantity',userController.updateCart)
 //  Order management
 user_route.get('/orders',orderController.getOrders)
+// product cancel
+user_route.post('/product-cancel',orderController.productCancel)
+// order cancel page
+user_route.get('/cancel',orderController.getProductCancel)
 // all product
 user_route.get('/product',productController.getProducts)
 // filter categories on home page

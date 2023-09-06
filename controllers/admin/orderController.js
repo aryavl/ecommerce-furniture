@@ -3,65 +3,124 @@ const Order = require("../../model/orderModel");
 const Products = require("../../model/productModel");
 const User = require("../../model/userModel");
 const { findOne } = require("../../model/adminModel");
+const { Mongoose } = require("mongoose");
 
 
 module.exports.getOrderList=async(req,res)=>{
 try{
-    // const orders = await Order.find({});
-    // console.log(orders); // [{}]
-    const orders = await Order.aggregate([
-      {
-        $match: {
-          isList: true
-        }
+  const pipeline = [
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user'
       }
-    ]);
-    const orderList = [];
-
-    for (let i = 0; i < orders.length; i++) {
-      const userId = orders[i].user; // Extract user ID from the order
-
-      // Fetch the user information based on the extracted ID
-      const user = await User.findById(userId);
-        // console.log(user); user data
-      // Extract orderItems from the current order
-      const orderItems = orders[i].orderItems;
-      const processedOrderItems = [];
-
-      // Process each order item
-      for (let j = 0; j < orderItems.length; j++) {
-        const product = await Products.findById(orderItems[j].product);
-
-        // Combine product information with quantity
-        const processedOrderItem = {
-          product: product,
-          quantity: orderItems[j].quantity,
-        };
-
-        processedOrderItems.push(processedOrderItem);
+    },
+    {
+      $unwind: '$user'
+    },
+    {
+      $unwind: '$orderItems'
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'orderItems.product_id',
+        foreignField: '_id',
+        as: 'orderItems.product'
       }
-
-      // Combine order details with processed orderItems and user ID
-      const processedOrder = {
-        
-       
-        user: user, // Including the full user object if needed
-        orderId:orders[i].orderId,
-        orderStatus: orders[i].orderStatus,
-        orderItems: processedOrderItems,
-        totalAmount: orders[i].totalAmount,
-        purchaseDate: orders[i].purchaseDate,
-        deliveryDate: orders[i].deliveryDate,
-        paymentMethod: orders[i].paymentMethod,
-      
-      };
-
-      orderList.push(processedOrder);
+    },
+    {
+      $project: {
+        _id: 1, // Include any other fields you need
+        user: 1,
+        orderId: 1,
+        orderItems: 1,
+        totalAmount: 1,
+        purchaseDate: 1,
+        deliveryDate: 1,
+        paymentMethod: 1
+      }
+    },
+    {
+      $sort: {
+        purchaseDate: -1 // Sort by purchaseDate in descending order
+      }
+    },
+    {
+      $group: {
+        _id: '$orderId',
+        user: { $first: '$user' },
+        orderId: { $first: '$orderId' },
+        orderItems: { $push: '$orderItems' },
+        totalAmount: { $first: '$totalAmount' },
+        purchaseDate: { $first: '$purchaseDate' },
+        deliveryDate: { $first: '$deliveryDate' },
+        paymentMethod: { $first: '$paymentMethod' }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        user: 1,
+        orderId: 1,
+        orderItems: 1,
+        totalAmount: 1,
+        purchaseDate: 1,
+        deliveryDate: 1,
+        paymentMethod: 1
+      }
     }
+  ];
+  
+  const orderLists = await Order.aggregate(pipeline);
+  
+// console.log("****************");
+//    console.log("orderLists",orderLists );
+// console.log("****************");
 
-    // Now, orderList contains processed orders with their associated user IDs and orderItems.
-    // console.log(orderList);
-    res.render('orderManagement',{orders:orderList})
+  const orderLis = await Order.find({})
+  .populate('user')
+  .populate({
+    path: 'orderItems.product_id',
+    model: 'Products' // Replace 'Product' with the actual product model name
+  })
+  .sort({ purchaseDate: -1 }); // Sort by purchaseDate in descending order
+
+  orderLis[0].orderItems.forEach(item=>{
+
+    // console.log("SORT ORDER",item);
+  })
+  // console.log("-----------");
+
+  // console.log(orderLists,"-----------------");
+  
+  console.log("****************");
+   console.log("orderLists",orderLis );
+console.log("****************");
+  
+
+
+    const itemsPerPage = 6;
+    const totalItems = orderLis.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const itemsToShow = orderLis.slice(startIndex, endIndex);
+
+    const innerArrays = itemsToShow.map(item => item.orderItems);
+   const ans=  innerArrays.map(item=>{
+    return item 
+    })
+    // const item=itemsToShow.map(item=>item)
+    // console.log("Inner arrays:", innerArrays.length, '$$$',item.length);
+  console.log("dsfdsaf",ans);
+    res.render('orderManagement',{orders:orderLis,items: itemsToShow,orderItems:innerArrays,
+      totalPages: totalPages,
+      currentPage: currentPage,})
 }catch(err){
     console.error("getOrderList",err.message);
 }
@@ -73,42 +132,117 @@ module.exports.postOrderUpdate=async(req,res)=>{
       //  console.log(req.body);
       const pipeline = [
         { $match: { orderId: req.body.orderId } },
-        {
-          $project: {
-            orderStatus: 1,
-          },
-        },
+        {$unwind:"$orderItems"},
+        
       ];
       
       const order = await Order.aggregate(pipeline);
+      // const orderr= await Order.find({orderId: req.body.orderId })
+  //     const orderr = await Order.find({orderId: req.body.orderId})
+  // .populate('user')
+  // .populate({
+  //   path: 'orderItems.product_id',
+  //   model: 'Products' // Replace 'Product' with the actual product model name
+  // })
+  const orderr = await Order.aggregate([
+    {
+      $match: {
+        orderId: req.body.orderId,
+      },
+    },
+    {
+      $lookup: {
+        from: 'users', // Replace with the actual user collection name
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user',
+      },
+    },
+    {
+      $unwind: '$user',
+    },
+    {
+      $lookup: {
+        from: 'products', // Replace with the actual product collection name
+        localField: 'orderItems.product_id',
+        foreignField: '_id',
+        as: 'orderItems.product_id',
+      },
+    },
+    {
+      $unwind: '$orderItems.product_id',
+    },
+    {
+      $group: {
+        _id: '$_id', // Group by the Order's _id field (or any other unique identifier)
+        orderId: { $first: '$orderId' }, // Include other fields you need
+        user: { $first: '$user' }, // Include other fields you need
+        orderItems: { $push: '$orderItems' },
+      },
+    },
+  ]);
+  // i will come back
+      console.log("****************");
+      console.log(orderr);
+      console.log("****************");
+      const productId = req.body.productId
+     
+    
+      if (orderr.length > 0) {
+        const order = orderr[0];
+        
+        // Update the status of each item in the order
+        const updatedOrderItems = order.orderItems.map((item) => {
+          let updateStatus;
+          const objectId = item.product_id._id
+const objectIdString = objectId.toString();
+const numericPortion = objectIdString.match(/[0-9a-f]+/i)[0];
+
+
+          console.log(item.orderStatus,"@@@@@");
+          if (numericPortion === productId) {
+            switch (item.orderStatus) {
+              case "pending":
+                updateStatus = "processing";
+                break;
+              case "processing":
+                updateStatus = "delivered";
+                break;
+              // Add more cases as needed
+              
+              default:
+                // Handle other cases if necessary
+                break;
+            }
+          } else {
+            // If numericPortion does not match productId, keep the existing status
+            updateStatus = item.orderStatus;
+          }
       
-      if (order.length > 0) {
-        const currentStatus = order[0].orderStatus;
+          // Return a new object with the updated orderStatus
+          return { ...item, orderStatus: updateStatus };
+        });
+        console.log("######33",updatedOrderItems);
+        // Update the entire order's orderItems array with the updated values
+        const updatedOrder = await Order.findOneAndUpdate(
+          { orderId: req.body.orderId },
+          { $set: { orderItems: updatedOrderItems } },
+          { new: true } // To return the updated document
+        );
       
-        let updateStatus;
-        let newStatus;
-      
-        if (currentStatus === "pending") {
-          updateStatus = "processing";
-          newStatus = "processing";
-        } else if (currentStatus === "processing") {
-          updateStatus = "delivered";
-          newStatus = "delivered";
-        }
-      
-        if (updateStatus) {
-          await Order.updateOne(
-            { orderId: req.body.orderId },
-            [{ $set: { orderStatus: updateStatus } }],
-          );
-      
-          res.send({ status: newStatus });
-        } else {
-          res.send({ status: currentStatus });
-        }
+        // Handle updatedOrder as needed (it contains the updated order)
+        console.log("Updated Order:", updatedOrder);
+        res.send({ status: updateStatus });
       } else {
-        res.status(404).send({ error: "Order not found" });
+        // Handle the case when no orders are found with the given orderId
+        console.log("Order not found.");
+        res.send({ status: currentStatus });
+
       }
+      
+          
+     
+      
       
       
     }catch(err){
@@ -126,33 +260,61 @@ module.exports.getOrderDetails=async(req,res)=>{
     try{
         console.log(req.query);
         const order= await Order.findOne({orderId:req.query.id})
-        // console.log(order);
+        const pipeline = [
+          {
+            $lookup: {
+              from: 'users', // Replace with your actual collection name for users
+              localField: 'user',
+              foreignField: '_id',
+              as: 'user'
+            }
+          },
+          {
+            $unwind: '$user'
+          },
+          {
+            $unwind: '$orderItems'
+          },
+          // {
+          //   $lookup:{
+          //     from:'products',
+          //     localField:'product_id',
+          //     foreignField:'_id',
+          //     as:'product'
+          //   }
+          // },
+          // {
+          //   $unwind: '$product'
+          // },
+
+        ];
+        const orderList = await Order.aggregate(pipeline);
+         console.log("order list  -------------->",order);
         if (order) {
       const user = await User.findOne({ _id: order.user });
      let orderDetails=[]
      let orders={ address:order.address,
       name:user.name,
-      orderStatus:order.orderStatus,
+      orderStatus:order.orderItems[0].orderStatus,
       totalAmount:order.totalAmount,
       purchaseDate:order.purchaseDate,
       deliveryDate:order.deliveryDate,
       paymentMethod:order.paymentMethod}
       orderDetails.push(orders)
-    for (const orderItem of order.orderItems) {
-      const product = await Products.findOne({ _id: orderItem.product }); 
+    const id =order.orderItems[0].product_id
+      const product = await Products.findOne({ _id:id }); 
+      console.log("dkfjklkk",product);
       if (product) {
        
         const orderDetail = {
 
           productName: product.productName,
-          quantity: orderItem.quantity
+          quantity: order.orderItems[0].quantity
 
       };
       orderDetails.push(orderDetail);
           // console.log(`Product Name: ${product.productName}, Quantity: ${orderItem.quantity}`);
-      } else {
-          console.log(`Product not found for productid: ${orderItem.productid}`);
-      }
+      
   }
   console.log(orderDetails);
   res.render('orderDetails',{orderDetails})
@@ -195,3 +357,143 @@ module.exports.postCancelOrder = async (req, res) => {
     res.status(500).send({ status: "Error occurred while canceling order" });
   }
 };
+
+module.exports.postFilterOrder=async(req,res)=>{
+  try{
+    console.log(req.body);
+    const selectedStatus= req.body.selectedStatus
+    const selectedDate = req.body.selectedDate
+    // const formattedSelectedDate = selectedDate.split('/').reverse().join('-');
+    const targetDate = new Date(selectedDate)
+    if(selectedStatus ==='all'){
+    const orderList = await Order.find({
+     
+      purchaseDate: {
+        $gte: new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()), // Start of the target date
+        $lt: new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate() + 1) // Start of the next day
+      }
+    })
+      .populate('user')
+      .populate({
+        path: 'orderItems.product_id',
+        model: 'Products' // Replace 'Products' with the actual product model name
+      })
+      .sort({ purchaseDate: -1 });
+  console.log(orderList,"********************");
+    res.send({ data: orderList });
+}else if(selectedStatus==='pending'){
+  const orderList = await Order.find({
+     
+    purchaseDate: {
+      $gte: new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate() ), // Start of the target date
+      $lt: new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate() +1) // Start of the next day
+    },
+   
+
+  })
+    .populate('user')
+    .populate({
+      path: 'orderItems.product_id',
+      model: 'Products' // Replace 'Products' with the actual product model name
+    })
+    .sort({ purchaseDate: -1 });
+    console.log("orderList",orderList); ;
+//     const pendingOrders = orderList.forEach(order => {
+      
+
+      
+//     });
+// console.log(pendingOrders,"********************");
+  // res.send({ data: pendingOrders });
+}else if(selectedStatus==='cancelled'){
+  const orderList = await Order.find({
+     
+    purchaseDate: {
+      $gte: new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()), // Start of the target date
+      $lt: new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate() + 1) // Start of the next day
+    },
+   
+
+  })
+    .populate('user')
+    .populate({
+      path: 'orderItems.product_id',
+      model: 'Products' // Replace 'Products' with the actual product model name
+    })
+    .sort({ purchaseDate: -1 });
+    const cancelOrders = orderList.filter(order => {
+      return order.orderItems.some(orderItem => orderItem.orderStatus === 'cancel');
+    });
+console.log(cancelOrders,"********************");
+  res.send({ data: cancelOrders });
+}else{
+  const orderList = await Order.find()
+    .populate('user')
+    .populate({
+      path: 'orderItems.product_id',
+      model: 'Products' // Replace 'Products' with the actual product model name
+    })
+    .sort({ purchaseDate: -1 });
+console.log(orderList,"********************");
+  res.send({ data: orderList });
+}
+// const matchStage = {
+//   $match: {
+//     purchaseDate: {
+//       $gte: new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()), // Start of the target date
+//       $lt: new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate() + 1) // Start of the next day
+//     }
+//   }
+// };
+
+// const lookupStage = {
+//   $lookup: {
+//     from: 'products', // Replace 'products' with the actual product collection name
+//     localField: 'orderItems.product_id',
+//     foreignField: '_id',
+//     as: 'orderItems.product'
+//   }
+// };
+
+// const unwindStage = {
+//   $unwind: {
+//     path: '$orderItems.product',
+//     preserveNullAndEmptyArrays: true
+//   }
+// };
+
+// const sortStage = {
+//   $sort: {
+//     purchaseDate: -1
+//   }
+// };
+
+// let aggregationPipeline = [matchStage, lookupStage, unwindStage, sortStage];
+
+// if (selectedStatus === 'pending') {
+//   const matchPendingStage = {
+//     $match: {
+//       'orderItems.orderStatus': 'pending'
+//     }
+//   };
+
+//   aggregationPipeline.push(matchPendingStage);
+// }
+
+// if (selectedStatus === 'cancelled') {
+//   const matchCancelledStage = {
+//     $match: {
+//       'orderItems.orderStatus': 'cancel'
+//     }
+//   };
+
+//   aggregationPipeline.push(matchCancelledStage);
+// }
+
+// const orderList = await Order.aggregate(aggregationPipeline);
+// console.log(orderList,"********************");
+//   res.send({ data: orderList });
+  }catch(err){
+    console.error("postFilterOrder =====> ",err.message);
+  }
+}

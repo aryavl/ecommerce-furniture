@@ -24,7 +24,7 @@ module.exports.getCategoryList=async(req,res)=>{
 module.exports.getCategoryDelete = async(req,res)=>{
     try{
         const id = req.query.id
-            
+            console.log(id);
         await Category.findOneAndUpdate({_id:id},{$set:{isList:false}})
 
         res.redirect('/admin/category')
@@ -38,7 +38,7 @@ module.exports.getCategoryEditModal = async(req,res)=>{
     const id = req.query.id
     const category=await Category.findOne({_id:id})
     // console.log(category);
-    res.render('editCategory',{category:category})
+    res.render('editCategory',{check:category})
    }catch(err){
     console.error(err);
    }
@@ -123,7 +123,7 @@ module.exports.postCategoryAddCat = async(req,res)=>{
 module.exports.getSearch = async(req,res)=>{
     const searchQuery = new RegExp("^" + req.body.search, "i"); // Adding "i" flag for case-insensitive search
 
-    Category.find({ categoryName: { $regex: searchQuery } }).then((cat) => {
+    Category.find({ categoryName: { $regex: searchQuery },isList:true }).then((cat) => {
       if (cat.length === 0) {
         res.render('categoryManagement',{categories:[]})
       } else {

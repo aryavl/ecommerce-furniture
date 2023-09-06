@@ -1,64 +1,184 @@
 <%- include('./partials/header.ejs')  -%>
 <%- include('./partials/profileNav.ejs')  -%>
+<style>
+    .underline:hover {
+    text-decoration: underline;
+}
+</style>
 <div class="container mt-5 pt-5">
-    <div class="row">
-        <% if(orderItem.length===0){ %>
+    <h1 class="text-center mb-4">Order History</h1>
+    
+     <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+           
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" active>Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Buy Again</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Cancelled Orders</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+           
+        
+    
+
+    
+    <div class="mt-4">
+        <% if(orderItem.length === 0) { %>
             <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
                 <div class="m-l-25 m-r--38 m-lr-0-xl">
                     <span class="text-center text-danger">No items</span><br>
                     <a href="/products">Shop Now</a>
                 </div>
             </div>
-        <% } else{ %>
+        <% } else { %>
+
             <div class="col-lg-10 col-xl-10 m-lr-auto m-b-50">
                 <div class="m-l-25 m-r--38 m-lr-0-xl">
-                    <div class="wrap-table-shopping-cart">
-                        <table class="table-shopping-cart">
-                            <tr class="table_head">
-                                <th class="column-1 text-center"></th>
-                                <th class="column-2 text-center">Product</th>
-                                <th class="column-2 text-center">Quantity</th>
-                                <th class="column-2 text-center">Total</th>
-                                <th class="column-3 text-center">Status</th>
-                                <th class="column-4 text-center"></th>
+
+                        <span class="font-weight-bold">21 orders</span>  placed in 
+                        <select>
+                            <option value="past3">past 3 months</option>
+                            <option value="past30">past 30 days</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                
+            </div>
+            <%orderItem.forEach(item=>{ %>
+            <%
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                const day = date.getDate();
+                const monthNames = [
+                  "January", "February", "March",
+                  "April", "May", "June", "July",
+                  "August", "September", "October",
+                  "November", "December"
+                ];
+                const monthIndex = date.getMonth();
+                const year = date.getFullYear();
+              
+                const formattedDate = `${day} ${monthNames[monthIndex]} ${year}`;
+                return formattedDate;
+              }
+              
+              
+            %>
+            
+           
+            <% const formattedDate = formatDate(item.purchaseDate) %>
+            
+            
+            
+            
+            <div class="container">
+                <table class="table table-responsive">
+                    <thead class="bg-light w-100">
+                    
+                        <tr>
+                            <th class="col-md-2">
+                                <small class="font-weight-normal">ORDER PLACED</small>
+                                <p class="font-weight-normal"><%= formattedDate %></p>
+                            </th>
+                            <th class="col-md-2">
+                                <small class="font-weight-normal">TOTAL</small>
+                                <p class="font-weight-normal">&#8377; <%= item.totalAmount %></p>
+                            </th>
+                            <th class="col-md-2">
+                                <small class="font-weight-normal">SHIP TO</small><br>
+                                <div class="dropdown">
+                                    <a  href="#" class="text-capitalize text-dark dropdown-toggle font-weight-normal underline" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <%= item.user.name %>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                        <!-- Dropdown content goes here -->
+                                        <a class="dropdown-item" href="#" class="gap-1 text-capitalize"> <%= item.address %></a>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="col-md-12 text-right">
+                                <small class="font-weight-normal">ORDER #<%= item.orderId %></small><br>
+                                <a class="font-weight-normal" href="/order-details?id=<%= item.orderId %>" cls>View order details</a>
+                            </th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        
+                        <%item.orderItems.forEach(items=>{%>
+                        <tr>
+                            <td>
+                                    
+                              <img src="/asset/uploads/<%=items.product[0].images[0] %>" alt="<%=  items.product[0].productName%>" style="width: 90px; height: 95px;">
+                               
+                            </td>
+                            <td>
+                                <a class="text-capitalize text-dark underline" href="/product-detail?id=<%=items.product[0]._id %>"><%=items.product[0].productName %></a><br>
+                                <p>Return eligible through 29-Aug-2023 </p>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td>
                                 
-                                
-                            </tr>
+                                <%if(items.orderStatus !=='delivered' && items.orderStatus !=='cancel') {%>
+                                <a href="/cancel?id=<%=items._id %>&orderId=<%= item.orderId %>" class="btnStyle  pl-5 pr-5 pt-1 pb-1 " data-id="<%=items._id %>" data-orderId="<%=item.orderId %>">Cancel this delivery</a>
+                                <% }else if(items.orderStatus ==='cancel'){ %>
+                                <button class="btnStyle  pl-5 pr-5 pt-1 pb-1 " disabled> Cancelled</button>
+                                <% }else{ %>
+                                <a href="/return?orderId=<%= item.orderId %>" class="btnStyle  pl-5 pr-5 pt-1 pb-1 return"> Return item</button>
+
+                                    <% } %>
+                            </td>
                             
-                            
-                            <% orderItem.forEach((item, index) => { %>
-                                <% const matchingProduct = productDetail[index]; %>
-                                <tr class="table_row">
-                                    <td class="column-1 text-center">
-                                        <div class="how-itemcart1">
-                                            <img src="/asset/uploads/<%=matchingProduct.images[0]%>" alt="">
-                                        </div>
-                                    </td>
-                                    <td class="column-1 text-center">
-                                        <ul>
-                                            <li><%= matchingProduct.productName %></li>
-                                        </ul>
-                                    </td>
-                                    <td class="column-1 text-center"><%= matchingProduct.quantity %></td>
-                                    <td class="column-1 text-center">&#8377; <%= item.totalAmount %></td>
-                                    <td class="column-1 text-center"><%= item.orderStatus %></td>
-                                    <td class="column-1 text-center">
-                                        <button class=" btn btnStyle mb-3" style="padding: 7px 20px;">Track</button>
-                                        <button class="btn btn-outline-danger">Cancel</button>
-                                    </td>
-                                </tr>
-                            <% }) %>
-                            
-                               
-                               
-                               
-                               
-                            </table>
-                        </div>
-                        <% } %>
-                        </div>
-                        </div>
+                        </tr>
+                        <% }) %>
+                       
+                    </tbody>
+                </table>
+                <% }) %>
+                <% } %>
+                
     </div>
+    
+    
+    <!-- Inside your EJS template or in a separate JavaScript file -->
+
+
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        // Add JavaScript code here to handle filter application and order history display
+        // document.getElementById('applyFilters').addEventListener('click', function() {
+        //     const statusFilter = document.getElementById('statusFilter').value;
+        //     const dateFilter = document.getElementById('dateFilter').value;
+           
+            
+            
+        // });
+        const returnCancel = document.getElementById('return')
+        returnCancel.addEventListener('click',()=>{
+            console.log("clickrd");
+        })
+
+        });
+       
+     
+    </script>
     
 <%- include('./partials/footer.ejs')  -%>

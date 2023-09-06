@@ -1,0 +1,50 @@
+<%-include('adminNavbar')%>
+    
+<div class="container mt-5">
+    <div class="d-flex justify-content-between">
+        <h3 class="mb-5 ml-5">Banner</h3>
+        <a href="/admin/banner/addBanner" class="btn  btn-outline-success" style="height: 40px; width: 200px; margin-top: 35px;">Add Banner</a>
+    </div>
+
+    <% if (locals.message) { %>
+    <div class="alert alert-danger">
+        <strong><%= message %></strong>
+    </div>
+    <% } %>
+
+    <div class="d-flex">
+        <form action="/admin/banner/search" method="post" class="d-flex ms-2 me-2" role="search">
+            <input class="form-control me-2 border-success" type="text" placeholder="Search Banner" id="search" name="search">
+            <button class="btn btn-success" type="submit">Search</button>
+        </form>
+    </div>
+
+    <table class="table table-striped mt-3">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Banner Name</th>
+                <th scope="col">Image</th>
+                <th scope="col">Title</th>
+                <th scope="col">Subtitle</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <% banner.forEach(item => { %>
+            <tr>
+                <td class="text-capitalize"><%= item.bannerName %></td>
+                <td><img src="/asset/uploads/<%= item.image %>" alt="<%= item.bannerName %>" style="width: 80px;height: 80px;"></td>
+                <td><%= item.title %></td>
+                <td><%= item.subtitle %></td>
+                <td>
+                    <a href="/admin/banner/delete?id=<%= item._id %>" class="btn btn-danger">Remove</a>
+                </td>
+            </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+        
+</body>
+</html>

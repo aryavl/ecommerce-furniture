@@ -16,6 +16,58 @@
         <button class="btn btn-outline-primary" type="submit" value="Search">Search</button>
     </form>
   </div>
+  <div class="row m-md-1 bg-white pb-2 shadow rounded ">
+        
+    <div class="col-md-2 grid-margin stretch-card pt-3">
+      <select class="form-select form-select-sm border-success" style="width: 100%; 
+      border-width: 1px; color: rgb(15, 1, 3); border-radius: 20px; font-weight:
+       bold; margin-bottom: 5px; margin-top: 5px;" aria-label=".form-select-sm example" name="salesRe" id="sales"
+        onchange="getData()">
+        <option selected>Sales Category</option>
+        <option value="Daily">Daily</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Yearly">Yearly</option>
+      </select>
+    </div>
+    <div class="col-md-2 grid-margin stretch-card pt-3" style="display: none;" id="chooseMonth">
+      <select id="selectedMonth" class=" form-select form-select-sm border-success" style="width: 100%; 
+        border-width: 1px; color: rgb(15, 1, 3); border-radius: 20px; font-weight:
+        bold; margin-bottom: 5px; margin-top: 5px;" aria-label=".form-select-sm example" name="month">
+        <option selected>Monthly</option>
+        <option value="2023-01-01">January 2023</option>
+        <option value="2023-02-01">February 2023</option>
+        <option value="2023-03-01">March 2023</option>
+        <option value="2023-04-01">April 2023</option>
+        <option value="2023-05-01">May 2023</option>
+        <option value="2023-06-01">June 2023</option>
+        <option value="2023-07-01">July 2023</option>
+        <option value="2023-08-01">August 2023</option>
+        <option value="2023-09-01">September 2023</option>
+        <option value="2023-10-01">October 2023</option>
+        <option value="2023-11-01">November 2023</option>
+        <option value="2023-12-01">December 2023</option>
+      </select>
+
+    </div>
+    <div class="col-md-2 grid-margin stretch-card pt-3" style="display: none;" id="chooseDay">
+      <input type="date" name="today" id="selectedDate">
+
+    </div>
+    <div class="col-md-2 grid-margin stretch-card pt-3" style="display: none;" id="chooseYear">
+      <select id="selectedYear" class=" form-select form-select-sm border-success" style="width: 100%; ;
+        border-width: 1px; color: rgb(15, 1, 3); border-radius: 20px; font-weight:
+        bold; margin-bottom: 5px; margin-top: 5px;" aria-label=".form-select-sm example" name="year">
+        <option selected>Year</option>
+        <option value="2023"> 2023</option>
+
+      </select>
+
+    </div>
+    <div class="col-md-2 grid-margin stretch-card pt-3">
+      <button class="btn border-0 bg-transparent text-success" type="submit" id="report">submit</button>
+    </div>
+
+  </div>
 
     <table class="table table-bordered table-hover table-striped" style="text-align: center;">
       <thead class="thead-dark">
@@ -26,7 +78,7 @@
           <th scope="col">Order Amount</th>
           <th scope="col">Payment Method</th>
           <th scope="col">Order date</th>
-          <th scope="col"></th>
+          <th scope="col">Order Status</th>
   
         </tr>
       </thead>
@@ -44,13 +96,7 @@
             <td> <%=detail.paymentMethod %></td>
             <td> <%= detail.purchaseDate.toLocaleDateString() %></td>
             <td>
-              <button data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary update" style="margin-left: 5px;" >Update</button>
-              <%if(detail.orderStatus === 'delivered'){%>
-              <button disabled data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary cancel" style="margin-left: 5px;">Cancel</button>
-              <% }else{ %>
-                <button  data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary cancel" style="margin-left: 5px;">Cancel</button>
-                <% } %>
-              <a href="/admin/order/admindetails?id=<%=detail.orderId%>" class="btn btn-outline-primary" style="margin-left: 5px;">Details</a>
+              <%=detail.orderItems.orderStatus %>
             </td>
           </tr>
           <% }) %>
@@ -66,7 +112,64 @@
 
 </nav>
 </div> 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<script>
+   function getData() {
+      const selectedValue = document.getElementById('sales').value;
+      console.log(selectedValue);
+      const mode = selectedValue;
+      let options;
+      if (mode === "Daily") {
+        document.getElementById('chooseYear').style.display = "none";
+        document.getElementById('chooseMonth').style.display = "none";
+        document.getElementById('chooseDay').style.display = "block";
+      } else if (mode === "Monthly") {
+        document.getElementById('chooseDay').style.display = "none";
+        document.getElementById('chooseYear').style.display = "none";
+        document.getElementById('chooseMonth').style.display = "block";
+      } else if (mode === "Yearly") {
+        document.getElementById('chooseMonth').style.display = "none";
+        document.getElementById('chooseDay').style.display = "none";
+        document.getElementById('chooseYear').style.display = "block";
+      } else {
 
+      }
+    }
+    document.getElementById('report').addEventListener('click',()=>{
+      const selectedValue = document.getElementById('sales').value;
+      console.log(selectedValue);
+      let day
+      let month
+      let year
+
+      if (selectedValue === "Daily") {
+       
+        day= document.getElementById('selectedDate').value
+       console.log(day);
+      } else if (selectedValue === "Monthly") {
+       
+       month=  document.getElementById('selectedMonth').value
+      console.log(month);
+      } else if (selectedValue === "Yearly") {
+       
+       year=  document.getElementById('selectedYear').value
+      console.log(year);
+      } else {
+
+      }
+      $.ajax({
+    method: 'POST',
+    url: '/admin/report-order',
+    data: { day, month, year,selectedValue },
+    success: function (response) {
+      console.log(response);
+    },
+    error: function (error) {
+      console.error("Failed to filter order:", error);
+    }
+  });
+    })
+</script>
 </body>
 </html>

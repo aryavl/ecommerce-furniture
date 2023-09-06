@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 class="heading">Helooo</h1>
+    <button id="btn">Click</button>
+    <script>
+        document.getElementById('btn').addEventListener('click',()=>{
+const h1= document.querySelector('.heading').innerHTML
+console.log(h1);
+        })
+    </script>
+</body>
+</html>
+<% categories.forEach((check) => { %>
+    <tr>
+      <td style="text-transform: capitalize;"> <%= check.bannerName %></td>
+      <td>  <img src="/asset/uploads/<%= check.image %>"  alt="<%= check.bannerName %>" style="width: 80px;height: 80px;"></td>
+      <td> <%= check.description %></td>
+      <td>
+      <a href="/admin/banner/edit?id=<%=check._id%>" class="btn  btn-success">Edit</a>
+      <a href="/admin/banner/delete=<%=check._id%>" class="btn btn-danger" style="margin-left: 5px;">Delete</a></td>
+    </tr>
+    <% }) %>

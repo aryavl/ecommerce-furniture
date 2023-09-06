@@ -1,0 +1,89 @@
+<%- include('./partials/header.ejs')  -%>
+<%- include('./partials/profileNav.ejs')  -%>
+
+<div class="container mt-5 pt-5">
+    <div class="container mt-3 p-5" style="display: none;" id="reveal">
+        <div class="alert alert-danger p-2" style="border-left: 5px solid red;border-right: 1px solid red;border-top: 1px solid red;border-bottom: 1px solid red;">
+          <h2 class="mb-3 mt-2">This order has been cancelled.</h2>
+          <a style="outline: none; border: none;" class="btn btn-primary btnStyle mb-3" href="/">Continue shopping</a>
+        </div>
+      </div>
+    <div id="hide">
+    <div class="text-center">
+        <h1>Are you sure you want to cancel this order?</h1>
+    </div>
+   
+
+    <div class="mt-4">
+        <% let orderItemId %>
+        <% let orderId %>
+        <% let productId %>
+        <% let quantity %>
+        <h5 class="mb-3">Items Ordered</h5>
+        <ul class="list-group">
+            <!-- Replace with your actual items -->
+            <% orderLists.forEach(item=>{%>
+                <% orderId=item.orderId %>
+                <%item.orderItems.forEach(items=>{%>
+                    <% const price = items.product[0].price * items.quantity %>
+                    <% orderItemId = items._id %>
+                    <%  productId = items.product[0]._id %>
+                    <% quantity=items.quantity  %>
+            <li class="list-group-item"><%=items.quantity %> x <%=items.product[0].productName%> -  &#8377;<%=price %></li>
+            
+           <% }) %>
+           <% }) %>
+        </ul>
+    </div>
+
+    <div class="mt-4">
+        <h5>Reason for cancellation</h5>
+        <select class="form-select" id="cancellationReason">
+            <option value="" selected>Select cancellation reason</option>
+            <option value="mistake">Order created by mistake</option>
+            <option value="damaged">Damaged Product</option>
+            <option value="price">Item price too high</option>
+        </select>
+    </div>
+
+    <div class="mt-4 text-center">
+        <button class="btn btn-danger" id="cancel" data-orderItemId="<%=orderItemId  %>" data-orderId="<%=orderId %>" data-productId="<%=productId %>" data-quantity="<%=quantity%>" >Cancel this delivery</button>
+        <button class="btn btn-secondary" id="returnToOrderHistory">Return to order history</button>
+    </div>
+</div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+   
+    const cancelButton = document.getElementById('cancel');
+    
+    cancelButton.addEventListener('click', function () {
+        const cancelReason = document.getElementById('cancellationReason').value
+
+
+        let  orderItemId= this.getAttribute('data-orderItemId');
+        let  orderId= this.getAttribute('data-orderId');
+        let productId = this.getAttribute('data-productId');
+        let quantity = this.getAttribute('data-quantity');
+        //   console.log(orderId,orderItemId);
+         $.ajax({
+            method:'POST',
+            url:'/product-cancel',
+            data:{orderId,orderItemId,cancelReason,productId,quantity},
+            success:(response)=>{
+                console.log("from backend",response);
+                if(response.success){
+                    const hide = document.getElementById('hide')
+                    hide.style.display = 'none';
+                    const reveal = document.getElementById('reveal')
+                    reveal.style.display='block'
+                }
+            }
+         })
+    });
+    
+    });
+   
+ 
+</script>
+<%- include('./partials/footer.ejs')  -%>

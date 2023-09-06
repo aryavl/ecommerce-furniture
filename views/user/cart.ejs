@@ -1,12 +1,13 @@
 <%- include('./partials/header.ejs')  -%>
 <%- include('./partials/navbar.ejs')  -%>
 
-<!-- Cart -->
+
+
 
 <!-- breadcrumb -->
-<!-- <div class="container ">
-	<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
-		<a href="/" class="stext-109 cl8 hov-cl1 trans-04">
+<div class="container">
+	<div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg mt-5 pt-5">
+		<a href="index.html" class="stext-109 cl8 hov-cl1 trans-04">
 			Home
 			<i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
 		</a>
@@ -15,109 +16,203 @@
 			Shoping Cart
 		</span>
 	</div>
-</div> -->
-
+</div>
+	
 
 <!-- Shoping Cart -->
 <form class="bg0 p-t-75 p-b-85">
 	<div class="container">
 		<div class="row">
 			<% if(cartItem.length===0){ %>
-				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50 pt-4">
 					<div class="m-l-25 m-r--38 m-lr-0-xl">
 						<span class="text-center text-danger">No items</span><br>
 						<a href="/products">Shop Now</a>
 					</div>
 				</div>
 			<% } else{ %>
-				<div class="col-lg-10 col-xl-10 m-lr-auto m-b-50">
-					<div class="m-l-25 m-r--38 m-lr-0-xl">
-						<div class="wrap-table-shopping-cart">
-							<table class="table-shopping-cart">
-								<tr class="table_head">
-									<th class="column-1 text-left">Product</th>
-									<th class="column-2 text-center">Description</th>
-									<th class="column-3 text-center">Price</th>
-									<th class="column-4 text-center">Quantity</th>
-									<th class="column-5 text-center">Total</th>
-									
-								</tr>
-								<% const subtotal=[] %>
-								
-								<% cartItem.forEach(item => { %>
-									<% const total = item.product.price * item.count%>
-									<% subtotal.push(total) %>
-									<tr class="table_row">
-										<td class="column-1 text-center">
-											<div class="how-itemcart1">
-												<img src="/asset/uploads/<%= item.product.images[0] %>" alt="IMG">
-											</div>
-										</td>
-										<td class="column-2 text-center text-capitalize"><%= item.product.productName %></td>
-										<td class="column-3 text-center">Rs. <%= item.product.price %>.00</td>
-										<td class="column-4 text-center">
-											<div>
-												<p class="msg"></p>
-											</div>
-											<div class="wrap-num-product flex-w m-l-auto m-r-0">
-												<button onclick="decrementCount('<%= item.product._id %>','<%= item.count %>')" class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-													<i class="fs-16 zmdi zmdi-minus"></i>
-												</button>
-
-												<input class="mtext-104 cl3 txt-center num-product why" id="inpt" type="number" name="num-product1" value="<%= item.count %>" data-item-id="<%= item.product._id %>" min="1" max="<%= item.product.stock %>">
-												<% if(item.product.stock > item.count){%>
-												<button class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" onclick="increasecount('<%= item.product._id %>','<%= item.count %>')" >
-													<i class="fs-16 zmdi zmdi-plus"></i>
-												</button>
-												<% } else{%>
-													<button class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" onclick="increasecount('<%= item.product._id %>','<%= item.count %>')" disabled>
-														<i class="fs-16 zmdi zmdi-plus"></i>
-													</button>
-													<% } %>
-											</div>
-										</td>
-										<td class="column-5 text-center">Rs. <%= item.product.price * item.count %>.00 <a href="/cartDelete?id=<%=item.product._id %>"  class="ml-3"><i class="fa fa-remove text-danger" style="font-size:20px"></i></a> </td>
-										
-									</tr>
-									<% }) %>
-									
-								</table>
-							</div>
-							<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm ">
-								<div class="flex-w flex-m m-r-20 m-tb-5">
-									<input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon" placeholder="Coupon Code">
-			
-									<div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
-										Apply coupon
+			<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+				<div class="m-l-25 m-r--38 m-lr-0-xl">
+					<div class="wrap-table-shopping-cart">
+						<table class="table-shopping-cart">
+							<tr class="table_head">
+								<th class="column-1">Product</th>
+								<th class="column-2"></th>
+								<th class="column-3">Price</th>
+								<th class="column-4 text-center">Quantity</th>
+								<th class="column-5">Total</th>
+							</tr>
+							<% cartItem.forEach(item => { %>
+							<tr class="table_row">
+								<td class="column-1">
+									<div class="how-itemcart1">
+										<img src="/asset/uploads/<%= item.product.images[0] %>" alt="IMG">
 									</div>
-								</div>
-			
-								<div class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
-									Update Cart
-								</div>
+								</td>
+								<td class="column-2"><%= item.product.productName %></td>
+								<td class="column-3">&#8377;  <%= item.product.price %>.00</td>
+								<td class="column-4">
+									<div class="wrap-num-product flex-w m-l-auto m-r-0">
+										<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m" data-productId="<%= item.product._id %>">
+											<i class="fs-16 zmdi zmdi-minus"></i>
+										</div>
+
+										<input class="mtext-104 cl3 txt-center num-product <%=item.product._id %>" id="countVal" type="number" name="num-product1" value="<%=item.count %>" min="1" max="item.product.stock" >
+
+										<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m" data-productId="<%= item.product._id %>">
+											<i class="fs-16 zmdi zmdi-plus"></i>
+										</div>
+									</div>
+								</td>
+								<td class="column-5 mtext-110 cl2" id="<%=item.product._id %>">&#8377; <span class="totals "><%= item.total %>.00</span></td>
+							</tr>
+							<% }) %>
+						</table>
+					</div>
+
+					<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm">
+						<div class="flex-w flex-m m-r-20 m-tb-5">
+							<input class="stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5" type="text" name="coupon" placeholder="Coupon Code">
 								
-							</div>
-							<% const grandTotal= subtotal.reduce((acc,curr)=> acc+curr) %>
-							<div class="flex-w flex-sb-m bor15 p-t-18 p-b-15 p-lr-40 p-lr-15-sm ">
-								<div class="flex-c-m stext-101 cl2 size-119  p-lr-15  m-tb-10">
-									Grand Total
-								</div>
-								<div class="flex-c-m stext-101 cl2 size-119  p-lr-15  m-tb-10">
-									<h2>Rs. <%=grandTotal %>.00</h2>
-								</div>
-							</div>
-							<div class="d-flex justify-content-center mt-3">
-								<a href="/checkout" class="flex-c-m stext-101 cl0 px-5 py-3 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-									Confirm order
-								</a>
+							<div class="flex-c-m stext-101 cl2 size-118 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-5">
+								Apply coupon
 							</div>
 						</div>
+
+						<div class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10">
+							Update Cart
+						</div>
 					</div>
-				
+				</div>
+			</div>
+			
+			<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
+				<div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+					<h4 class="mtext-109 cl2 p-b-30">
+						Cart Totals
+					</h4>
+
+					<div class="flex-w flex-t bor12 p-b-13">
+						<div class="size-208">
+							<span class="stext-110 cl2">
+								Subtotal:
+							</span>
+						</div>
+
+						
+						<div class="size-209 p-t-1 mtext-110 cl2" >
+							<p id="subtot">&#8377;<%=subTotal %></p>
+								
+						</div>
+					</div>
+
+					
+						
+
+					<div class="flex-w flex-t p-t-27 p-b-33">
+						<div class="size-208">
+							<span class="mtext-101 cl2">
+								Total:
+							</span>
+						</div>
+
+						<div class="size-209 p-t-1 mtext-110 cl2">
+							<p id="total">&#8377;<%=subTotal %></p>
+						</div>
+					</div>
+
+					<a href="/checkout" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+						Proceed to Checkout
+					</a>
+				</div>
+			</div>
+		
+			
 			<% } %>
 		</div>
 	</div>
 </form>
-<!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
-<script src="/asset/js/updateCart.js"></script>
+<script>
+const countVal = document.getElementById("countVal")
+let count=countVal.value
+// For the "btn-num-product-down" button
+document.querySelectorAll('.btn-num-product-down').forEach(button => {
+    button.addEventListener('click', function() {
+        // let inputField = this.nextElementSibling;
+        let numProduct = Number(count);
+        if (numProduct > 1) {
+            count = numProduct - 1;
+			console.log(count,"iamcount");
+			const productId = this.getAttribute('data-productId');
+		console.log(productId,"iamID");
+		axiosFetching(productId,count)
+
+        }else if(numProduct === 0){
+			countVal.value = 1
+			const productId = this.getAttribute('data-productId');
+		console.log(productId,"iamID");
+		axiosFetching(productId,count)
+			
+		}
+    });
+});
+
+// For the "btn-num-product-up" button
+document.querySelectorAll('.btn-num-product-up').forEach(button => {
+    button.addEventListener('click', function() {
+        // let inputField = this.previousElementSibling;
+
+        let numProduct = Number(count);
+        count = numProduct + 1;
+		console.log(count,"iamcount");
+		const productId = this.getAttribute('data-productId');
+		console.log(productId,"iamID");
+		axiosFetching(productId,count)
+    });
+});
+
+function axiosFetching(prdId,count){
+    $.ajax({
+        method: 'POST',
+        url: '/updateQuantity',
+        data: { productId: prdId,count:count },
+        success: function(response) {
+          console.log("AJAX POST request to /test-post was successful!");
+           console.log("Response:-----", response);
+					
+				// Select all input elements with the matching class name
+			const countInputs = document.getElementsByClassName(prdId);
+			// console.log(countInputs);
+			// Loop through the collection and update each input value
+			for (let i = 0; i < countInputs.length; i++) {
+				countInputs[i].value = Number(response.count);
+			}
+
+	
+			const id=document.getElementById(prdId)
+			// console.log(id);
+			id.innerHTML="&#8377; " + Number(response.indTotal)+".00"
+			const subtot=document.getElementById('subtot')
+			
+			
+			subtot.innerHTML ="&#8377; "+response.subTotal+".00";
+			const total=document.getElementById('total')
+			// console.log(tot);
+			
+			total.innerHTML ="&#8377; "+response.subTotal+".00";
+			
+		
+					
+
+        },
+        error: function(error) {
+          console.error("AJAX POST request to /test-post failed:", error);
+        }
+      });
+      
+}
+
+
+</script>
+	
 <%- include('./partials/footer.ejs')  -%>

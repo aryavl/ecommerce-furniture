@@ -11,19 +11,45 @@
   <% } %> 
     <% let orderId %>
     <div class="d-flex">
-    <form action="/admin/order/search" method="get" class="d-flex ms-2 me-2" role="search" >
+    <!-- <form action="/admin/order/search" method="get" class="d-flex ms-2 me-2" role="search" >
         <input class="form-control me-2" type="text" placeholder="Search Order" id="search" name="search">
         <button class="btn btn-outline-primary" type="submit" value="Search">Search</button>
-    </form>
+    </form> -->
   </div>
+       
+  <div class="row align-items-end col-lg-10 col-xl-10 m-lr-auto m-b-50 mr-0 mt-2">
+    <div class="col-lg-3 col-md-4 mb-3 ">
+        <label for="statusFilter">Filter by Status</label>
+        <select class="form-control" id="statusFilter">
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="shipped">Shipped</option>
+            <option value="delivered">Delivered</option>
+        </select>
+    </div>
+    
+    <div class="col-lg-3 col-md-4 mb-3">
+        <label for="dateFilter">Filter by Date</label>
+        <input type="date" class="form-control" id="dateFilter">
+    </div>
+    
+    <div class="col-lg-3 col-md-4 mb-3">
+        <label class="d-none d-md-block">&nbsp;</label>
+        <button class="btn btnStyle btn-block" id="applyFilters">Apply Filters</button>
+    </div>
+</div>
 
-    <table class="table table-bordered table-hover table-striped" style="text-align: center;">
+
+
+    <table class="table table-bordered table-hover table-striped" >
       <thead class="thead-dark">
         <tr>
           <th  scope="col">OrderID</th>
+          
           <th  scope="col">Client Name</th>
           <th scope="col">Order status</th>
-          <th scope="col">Order Amount</th>
+          <th scope="col">Product Name</th>
           <th scope="col">Payment Method</th>
           <th scope="col">Order date</th>
           <th scope="col"></th>
@@ -31,55 +57,86 @@
         </tr>
       </thead>
 
-      <tbody>
-        <% if(locals.orders){ %>
+      <tbody id="filteredResults">
+        <% if(locals.items){ %>
 
-        <% orders.forEach((detail)=>{ %>
-       <% orserId=detail.orderId %>
-          <tr class="word-wrap">
-            <td class="word-wrap"> <%=detail.orderId %></td>
-            <td class="text-capitalize"><%=detail.user.name %> </td>
-            <td style="width:15em">
-                
+          
+          <% items.forEach(item => { %>
+            <% item.orderItems.forEach(orderItem => { %>
+              <tr class="word-wrap">
+                <td class="word-wrap orderId"><%= item.orderId %></td>
+                <td class="text-capitalize username"><a href="/admin/order/admindetails?id=<%= item.orderId %>"><%= item.user.name %></a> </td>
+                <td >
                   <div class="progress">
-                    <% if(detail.orderStatus === 'pending'){%>
-                      <div class="progress-bar bg-warning" data-orderid="<%= detail.orderId %>" role="progressbar" style="width:25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                      <% } else if(detail.orderStatus === 'processing'){%>
-                        <div class="progress-bar bg-primary" data-orderid="<%= detail.orderId %>" role="progressbar" style="width:50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                        <% }  else if(detail.orderStatus === 'delivered'){%>
-                          <div class="progress-bar bg-success" data-orderid="<%= detail.orderId %>" role="progressbar" style="width:100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                          <% }else if(detail.orderStatus === 'cancel'){%>
-                            <div class="progress-bar bg-danger" data-orderid="<%= detail.orderId %>" role="progressbar" style="width:100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                            <% }else{ %>
-                            <div class="progress-bar" role="progressbar" data-orderid="<%= detail.orderId %>"  aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                            <% } %>
+                    <% if (orderItem.orderStatus === 'pending') { %>
+                      <div class="progress-bar bg-warning <%= orderItem.product_id._id %>" data-orderid="<%= item.orderId %>" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"> 
+                        <input type="hidden" name="" class="prdtIds" value="<%= orderItem.product_id._id %>">
+                      
+                      </div>
+                    <% } else if (orderItem.orderStatus === 'processing') { %>
+                      <div class="progress-bar bg-primary <%= orderItem.product_id._id %>" data-orderid="<%= item.orderId %>" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                        <input type="hidden" name="" class="prdtIds" value="<%= orderItem.product_id._id %>">
+                      </div>
+                    <% } else if (orderItem.orderStatus === 'delivered') { %>
+                      <div class="progress-bar bg-success <%= orderItem.product_id._id %>" data-orderid="<%= item.orderId %>" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                        <input type="hidden" name="" class="prdtIds" value="<%= orderItem.product_id._id %>">
+                      </div>
+                    <% } else if (orderItem.orderStatus === 'cancel') { %>
+                      <div class="progress-bar bg-danger <%= orderItem.product_id._id %>" data-orderid="<%= item.orderId %>" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                        <input type="hidden" name="" class="prdtIds" value="<%= orderItem.product_id.product_id  %>">
+                      </div>
+                    <% } else { %>
+                      <div class="progress-bar <%= orderItem.product_id._id %>" role="progressbar" data-orderid="<%= item.orderId %>" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        <input type="hidden" name="" class="prdtIds" value="<%= orderItem.product_id.product_id %>">
+                      </div>
+                    <% } %>
                   </div>
-            </td>
-            <td>&#8377; <%=detail.totalAmount %></td>
-            <td> <%=detail.paymentMethod %></td>
-            <td> <%= detail.purchaseDate.toLocaleDateString() %></td>
-            <td>
-              <button data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary update" style="margin-left: 5px;" >Update</button>
-              <%if(detail.orderStatus === 'delivered'){%>
-              <button disabled data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary cancel" style="margin-left: 5px;">Cancel</button>
-              <% }else{ %>
-                <button  data-orderid="<%= detail.orderId %>" class="btn btn-outline-primary cancel" style="margin-left: 5px;">Cancel</button>
-                <% } %>
-              <a href="/admin/order/admindetails?id=<%=detail.orderId%>" class="btn btn-outline-primary" style="margin-left: 5px;">Details</a>
-            </td>
-          </tr>
-          <% }) %>
+                </td>
+                <td class="text-left"> <%= orderItem.product_id.productName %></td>
+                <td><%= item.paymentMethod %></td>
+                <td><%= item.purchaseDate.toLocaleDateString() %></td>
+                <td>
+                  <button data-orderid="<%= item.orderId %>" data-productid="<%= orderItem.product_id._id %>" id="btnUpdate" class="btn btn-outline-primary update"  style="margin-left: 5px;"><%=orderItem.orderStatus %></button>
+                  
+                
+                </td>
+              </tr>
+            <% }); %>
+          <% }); %>
+          
           <% }else{ %>
             <h2>No orders </h2>
             <a href="/">Shop</a>
             <% } %>
       </tbody>
+      <tbody id="fetchResult" style="display: none;">
+
+      </tbody>
     </table>
 
-    <div class="align-items-center">
-<nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
-
-</nav>
+    <div class="align-items-center" id="pagination">
+      <nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+        <p class="text-center">Page <%= currentPage %> of <%= totalPages %></p>
+        <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                </li>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= totalPages %>">Last</a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+    
 </div> 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -90,7 +147,10 @@ document.querySelectorAll('.update').forEach(button => {
   button.addEventListener('click', function() {
     // Get the selected value
     let orderId = this.getAttribute('data-orderid');
-    
+    const productId = button.getAttribute('data-productid');
+        
+        // Now you can use the 'productId' as needed
+        console.log('Product ID:', productId);
     console.log(orderId);
    
     // You can now use the selectedValue in your script as needed.
@@ -98,24 +158,33 @@ document.querySelectorAll('.update').forEach(button => {
     $.ajax({
   method: 'POST',
   url: '/admin/orderUpdate',
-  data: { orderId: orderId },
+  data: { orderId: orderId ,productId},
   success: function(response) {
     console.log("AJAX POST request to /test-post was successful!");
-    console.log("Response:", response);
+    console.log("Response:", response.status);
     
     const progressBar = document.querySelector(`.progress-bar[data-orderid="${orderId}"]`);
-    console.log(progressBar);
+    const btnUpdate = document.getElementById('btnUpdate')
+
+    const item = document.getElementsByClassName(prdtId);
+    
+   console.log(item,"%%%%%%%%%%");
     
     let processingPercentage = 0; // Initialize progress
     let backgroundColor = ''; // Initialize background color
     
     if (response.status === "processing") {
+      item.forEach()
       processingPercentage = 50; // Processing status, set progress to 50%
       backgroundColor = 'blue'; // Change color to blue
+      btnUpdate.innerHTML=response.status
+      btnUpdate.style.backgroundColor='blue'
       alert("processing")
+
     } else if (response.status === "delivered") {
       processingPercentage = 100; // Delivered status, set progress to 100%
       backgroundColor = 'green'; // Change color to green
+      btnUpdate.innerHTML=response.status
       alert("delivered")
 
     }
@@ -166,7 +235,7 @@ document.querySelectorAll('.cancel').forEach(button => {
             if (response.status === "delivered") {
               const cancelButtons = document.querySelectorAll(`.cancel[data-orderid="${orderId}"]`);
               cancelButtons.forEach(cancelButton => {
-                cancelButton.disabled = true;
+              cancelButton.disabled = true;
               });
             }
           });
@@ -178,6 +247,90 @@ document.querySelectorAll('.cancel').forEach(button => {
   });
 });
 });
+
+
+function convertToDDMMYYYY(selectedDate) {
+    // Create a Date object from the selected date
+    var date = new Date(selectedDate);
+
+    // Extract day, month, and year components
+    var day = date.getDate().toString().padStart(2, '0'); // Pad with leading zeros if needed
+    var month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-indexed, so add 1
+    var year = date.getFullYear();
+
+    // Create the formatted "DD-MM-YYYY" date
+    var formattedDate = day + '/' + month + '/' + year;
+
+    return formattedDate;
+}
+
+document.getElementById("applyFilters").addEventListener('click',()=>{
+  let statusFilter = document.getElementById("statusFilter");
+  let selectedStatus = statusFilter.value;
+  let dateFilter = document.getElementById("dateFilter");
+  let selectedDate = dateFilter.value;
+  // var formattedDate = convertToDDMMYYYY(selectedDate);
+  // console.log(selectedStatus,formattedDate ==="04/09/2023" );
+  $.ajax({
+      method: 'POST',
+      url: '/admin/filter-order',
+      data: { selectedStatus,selectedDate },
+      success: function(response) {
+        // document.getElementById('filteredResults').style.display = 'none';
+        $('#filteredResults').html('');
+        $('#pagination').html('');
+        response.data.forEach(item=>{
+          item.orderItems.forEach(orderItem =>{
+          let newRow = '<tr>';
+      newRow += '<td>' + item.orderId + '</td>';
+      newRow +='<td>'+'<a class="text-capitalize" href=`/admin/order/admindetails?id=${item.orderId }`>'+ item.user.name +'</a> '+ '</td>';
+      
+      newRow += '<td><div class="progress">';
+        
+        if (orderItem.orderStatus === 'pending') {
+          newRow += '<div class="progress-bar bg-warning" data-orderid="' + item.orderId + '" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>';
+        } else if (orderItem.orderStatus === 'processing') {
+          newRow += '<div class="progress-bar bg-primary" data-orderid="' + item.orderId + '" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>';
+        } else if (orderItem.orderStatus === 'delivered') {
+          newRow += '<div class="progress-bar bg-success" data-orderid="' + item.orderId + '" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>';
+        } else if (orderItem.orderStatus === 'cancel') {
+          newRow += '<div class="progress-bar bg-danger" data-orderid="' + item.orderId + '" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>';
+        } else {
+          newRow += '<div class="progress-bar" role="progressbar" data-orderid="' + item.orderId + '" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>';
+        }
+
+        newRow += '</div></td>';
+
+
+
+        newRow += '<td class="text-left">' + orderItem.product_id.productName + '</td>';
+        newRow += '<td >' + item.paymentMethod  + '</td>';
+
+        const purchaseDate = new Date(item.purchaseDate);
+
+const day = purchaseDate.getDate().toString().padStart(2, '0'); // Add leading zero if needed
+const month = (purchaseDate.getMonth() + 1).toString().padStart(2, '0'); // Add leading zero if needed
+const year = purchaseDate.getFullYear();
+
+// Format the date as "DD/MM/YYYY"
+const formattedPurchaseDate = `${day}/${month}/${year}`;
+
+newRow += '<td>' + formattedPurchaseDate + '</td>';
+
+       newRow += '<td><button data-orderid="' + item.orderId + '" id="btnUpdate" class="btn btn-outline-primary update" style="margin-left: 5px;">' + orderItem.orderStatus + '</button></td>';
+    newRow += '</tr>';
+
+      // Append the new row to the tbody
+      $('#filteredResults').append(newRow);
+          console.log("Order filtered successfully!",item);
+        })
+      })
+      },
+      error: function(error) {
+        console.error("Failed to filter order:", error);
+      }
+      })
+})
 </script>
 </body>
 </html>

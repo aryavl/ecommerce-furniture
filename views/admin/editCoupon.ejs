@@ -1,0 +1,83 @@
+<%-include('adminNavbar')%>
+<section class=" gradient-custom pt-5">
+    <div class="container">
+      <div class="row d-flex justify-content-center align-items-center">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5 mb-3">
+          <div class="card  text-white g-white shadow" style="border-radius: 1rem">
+            <div class="card-body text-center ">
+              <div class=" mt-md-4 pb-md-2  b">
+                <h2 class="fw-bold mb-2 text-uppercase text-black pb-3">
+                  Edit Coupon
+                </h2>
+                <% if(couponData){ %>
+                    <% couponData.forEach(item=>{ %>
+                  <form class="p-md-2" action=" " method="post">
+                    <input class="form-control form-control-lg text-black-50" type="text" name="coupon_name" placeholder="Coupon Name"
+                      id="couponName" value="<%=couponData.couponName %>"" />
+                    <span id="Name"></span><br />
+
+                    <div class="input-group ">
+                      <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="offer" placeholder="Offer %"
+                        id="couponOffer" value="<%= couponData?couponData.couponValue:'' %>" />
+                      <span class="input-group-text" id="basic-addon1">%</span>
+                    </div>
+                    <span id="Email"></span><br />
+                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="min_value" placeholder="Min Value"
+                      id="min_Value" value="<%= couponData?couponData.minValue:'' %>" />
+                    <span id="Number"></span><br />
+                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="max_value" placeholder="Max Value"
+                      id="maxValue" value="<%= couponData?couponData.maxValue:'' %>" />
+                    <span id="Password"></span><br />
+                    <input class="form-control form-control-lg text-black-50" type="date" name="expiry_date" placeholder="Expiry Date"
+                      id="expiryDate" value="<%= couponData?couponData.expiryDate:'' %>" />
+                    <input class="btn btn-primary mt-md-4" type="submit" value="Add Coupon"
+                      style="background-color: green" />
+                  </form>
+
+                  <% if(typeof message !=='undefined' ) { %>
+                    <p style="color: red">
+                      <%= message %>
+                    </p>
+                    <% } %>
+                    <% }) %>
+                <% }else{ %>
+                  <form class="p-md-2" action=" " method="post">
+                    <input class="form-control form-control-lg text-black-50" type="text" name="coupon_name" placeholder="Coupon Name"
+                      id="couponName"  />
+                    <span id="Name"></span><br />
+
+                    <div class="input-group ">
+                      <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="offer" placeholder="Offer %"
+                        id="couponOffer"  />
+                      <span class="input-group-text" id="basic-addon1">%</span>
+                    </div>
+                    <span id="Email"></span><br />
+                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="min_value" placeholder="Min Value"
+                      id="min_Value"  />
+                    <span id="Number"></span><br />
+                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="max_value" placeholder="Max Value"
+                      id="maxValue" >
+                    <span id="Password"></span><br />
+                    <input class="form-control form-control-lg text-black-50" type="date" name="expiry_date" placeholder="Expiry Date"
+                      id="expiryDate"  />
+                    <input class="btn btn-primary mt-md-4" type="submit" value="Add Coupon"
+                      style="background-color: green;" />
+                  </form>
+
+                  <% if(typeof message !=='undefined' ) { %>
+                    <p style="color: red">
+                      <%= message %>
+                    </p>
+                    <% } %>
+
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

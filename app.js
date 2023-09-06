@@ -3,6 +3,7 @@ const session = require('express-session')
 const path = require('path')
 const userRoute = require('./routes/user/userRoute')
 const adminRoute = require('./routes/admin/adminRoute')
+
 const app = express()
 
 app.set("view engine", "ejs")
@@ -24,11 +25,14 @@ app.use((req, res, next) => {
   res.setHeader('Expires', '0');
   next();
 });
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 
 
-app.use('/',userRoute)
 app.use('/admin',adminRoute)
+app.use('/',userRoute)
+app.use((req, res, next) => {
+  res.status(404).render('error', { message: 'Page not found' });
+});
+
 app.listen(3004)

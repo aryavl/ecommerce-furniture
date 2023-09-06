@@ -3,12 +3,12 @@
 <%-include('adminNavbar')%>
 
 
-<section  style="background-color: #2779e2;">
+<section >
     <div class="container ">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-xl-9">
   
-          <h1 class="text-white mb-4">Edit Category</h1>
+          <h1 class="text-center mb-4">Edit Category</h1>
   
           <div class="card" style="border-radius: 15px;">
 
@@ -42,7 +42,7 @@
                   <h6 class="mb-0">Category Description</h6>
                 </div>
                 <div class="col-md-9 pe-5">
-                  <textarea class="form-control" rows="3" name="categorydesc"><%=check.categoryDescription %></textarea>
+                  <textarea class="form-control" rows="3" name="categorydesc"><%=check.description %></textarea>
                 </div>
               </div>
   
@@ -53,7 +53,15 @@
                 <div class="col-md-3 ps-5" style="flex: 1;" >
     
                   <h6 class="mb-0" >Category Image upload</h6>
-  
+                  <div class="thumbnail text-center" style="width: 600px; display: flex; justify-content: space-around;" >
+                   
+                      <div style="width: 150px; height: 250px;">
+                      <img src="/asset/uploads/<%=check.image %>" width="80"  style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px; margin-left: 10px;margin-top: -20px;">
+                      <!-- <a href="/admin/category/deleteimage?catImg=<%=check.image %>" class="btn btn-outline-danger" style="margin-top: 10px;"><i class="fa fa-remove" style="font-size:15px"></i></a> -->
+
+                    </div>
+                 
+                  </div>
                 </div>
                 <div style="flex: 1;">
                 <input class="form-control" name="file"  type="file" id="formFileMultiple" multiple />

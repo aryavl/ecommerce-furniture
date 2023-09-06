@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
     cart:{
         type:Array,
     } ,
+    wallet:{
+        type:Number,
+        default:100,
+    },
     address: {
         items: [{
             name: {
