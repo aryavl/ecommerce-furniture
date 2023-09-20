@@ -2,6 +2,7 @@ const Products = require("../../model/productModel");
 const { ObjectId } = require('mongodb');
 const User = require("../../model/userModel");
 const Category = require("../../model/categoryModel");
+const Banner = require("../../model/bannerModel");
 module.exports.getFilterCat=async(req,res)=>{
     try{
         if(req.query.id!==""){
@@ -16,7 +17,7 @@ module.exports.getFilterCat=async(req,res)=>{
               }
             }
           ]);
-        const productsWithCategory = await Products.find({ category: id }).populate('category');
+        const productsWithCategory = await Products.find({ category: id ,isList:true}).populate('category');
 
         const productsWithCategoryy = await Products.aggregate([
             {
@@ -36,7 +37,14 @@ module.exports.getFilterCat=async(req,res)=>{
               $unwind: '$category'
             }
           ]);
-           res.render('home',{user:user,products:productsWithCategory,category:categories})
+          const banner = await Banner.aggregate([
+            {
+              $match:{
+                isList:true
+              }
+            }
+          ])
+           res.render('home',{user:user,products:productsWithCategory,category:categories,banner})
         }else{
             
         }
@@ -44,4 +52,30 @@ module.exports.getFilterCat=async(req,res)=>{
     }catch(err){
         console.error("getFilterCat ---->",err.message);
     }
+}
+module.exports.postFiltercat=async(req,res)=>{
+  try{
+    console.log(req.body);
+    const catname = req.body.catname
+    const productsWithCategoryy = await Products.aggregate([
+      {
+        $match: {
+          categoryName:catname
+        }
+      },
+      {
+        $lookup: {
+          from: 'Category',  // Assuming the collection name for categories is 'categories'
+          localField: 'category',
+          foreignField: '_id',
+          as: 'category'
+        }
+      },
+      {
+        $unwind: '$category'
+      }
+    ]);
+  }catch(err){
+    console.error('postFiltercat ----> ',err.message);
+  }
 }

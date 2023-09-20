@@ -15,14 +15,29 @@ module.exports.getProductList=async(req,res)=>{
           ]);
         // console.log(pdt);
         if(pdt){
-            res.render('productManagement',{products:pdt})
+            const itemsPerPage = 6; // Set the desired number of items per page
+            const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+            const totalItems = pdt.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            // Calculate the startIndex and endIndex to load exactly 'itemsPerPage' items
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            
+            // Slice the array to get items for the current page, ensuring 'itemsPerPage' items
+            const itemsToShow = pdt.slice(startIndex, endIndex);
+            
+            res.render('productManagement',{products:pdt,items: itemsToShow,
+                
+                totalPages: totalPages,
+                currentPage: currentPage,})
         }
     }catch(err){
         console.error("getProductListerr",err.message);
     }
 }
 module.exports.getAddProduct = async (req, res) => {
-    const categories = await Category.find({})
+    const categories = await Category.find({isList:true})
     // console.log(categories);
     res.render('addProduct',{categories:categories});
 };
@@ -75,7 +90,7 @@ module.exports.getEditProduct = async(req,res)=>{
         let cat=await Category.findOne({_id:product.category},{categoryName:1})
         //  console.log("pdt",pdtid);
        
-        const categories = await Category.find({},);
+        const categories = await Category.find({isList:true});
         //   console.log(cat.categoryName);
         res.render('editProduct',{product:product,categoryName:cat.categoryName,pdtid,categories:categories})
        }catch(err){
@@ -160,10 +175,37 @@ module.exports.getSearch = async(req,res)=>{
 
     Products.find({ productName: { $regex: searchQuery } }).then((pdt) => {
       if (pdt.length === 0) {
-        res.render('productManagement',{products:[]})
+        const itemsPerPage = 6; // Set the desired number of items per page
+            const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+            const totalItems = pdt.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            // Calculate the startIndex and endIndex to load exactly 'itemsPerPage' items
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            
+            // Slice the array to get items for the current page, ensuring 'itemsPerPage' items
+            const itemsToShow = pdt.slice(startIndex, endIndex);
+        res.render('productManagement',{products:[],items: itemsToShow,
+            totalPages: totalPages,
+            currentPage: currentPage,})
 
       } else {
-        res.render('productManagement',{products:pdt})
+        const itemsPerPage = 6; // Set the desired number of items per page
+            const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+            const totalItems = pdt.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            // Calculate the startIndex and endIndex to load exactly 'itemsPerPage' items
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            
+            // Slice the array to get items for the current page, ensuring 'itemsPerPage' items
+            const itemsToShow = pdt.slice(startIndex, endIndex);
+            
+        res.render('productManagement',{products:pdt,items: itemsToShow,
+            totalPages: totalPages,
+            currentPage: currentPage,})
       }
     });
   

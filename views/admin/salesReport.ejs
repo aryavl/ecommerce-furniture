@@ -1,39 +1,38 @@
 <%-include('adminNavbar')%>
-<div class="d-flex " style=" width: 80%; margin-left: 25px; justify-content: space-between;">
-    <h3 class="mb-5 mt-5 ml-5">Orders</h3>
-    <!-- <a href="/admin/addproduct" class="btn btn-outline-primary" style="height: 40px; width: 200px; margin-top: 35px;">Add New Product</a> -->
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-content-center">
+    <h3 class="mb-5  text-center">Sales Report</h3>
   </div>
 
   <% if (locals.message) { %>
     <div class="alert alert-danger">
-      <strong><%= message %> </strong>
+      <strong><%= message %></strong>
     </div>
-  <% } %> 
-    <% let orderId %>
-    <div class="d-flex">
-    <form action="/admin/order/search" method="get" class="d-flex ms-2 me-2" role="search" >
-        <input class="form-control me-2" type="text" placeholder="Search Order" id="search" name="search">
+  <% } %>
+
+  <!-- <div class="d-flex">
+    <form action="/admin/order/search" method="get" class="d-flex ms-2 me-2" role="search">
+      <div class="input-group">
+        <input class="form-control" type="text" placeholder="Search Order" id="search" name="search">
         <button class="btn btn-outline-primary" type="submit" value="Search">Search</button>
+      </div>
     </form>
-  </div>
+  </div> -->
+
   <div class="row m-md-1 bg-white pb-2 shadow rounded ">
-        
-    <div class="col-md-2 grid-margin stretch-card pt-3">
-      <select class="form-select form-select-sm border-success" style="width: 100%; 
-      border-width: 1px; color: rgb(15, 1, 3); border-radius: 20px; font-weight:
-       bold; margin-bottom: 5px; margin-top: 5px;" aria-label=".form-select-sm example" name="salesRe" id="sales"
-        onchange="getData()">
-        <option selected>Sales Category</option>
-        <option value="Daily">Daily</option>
-        <option value="Monthly">Monthly</option>
-        <option value="Yearly">Yearly</option>
-      </select>
-    </div>
-    <div class="col-md-2 grid-margin stretch-card pt-3" style="display: none;" id="chooseMonth">
-      <select id="selectedMonth" class=" form-select form-select-sm border-success" style="width: 100%; 
-        border-width: 1px; color: rgb(15, 1, 3); border-radius: 20px; font-weight:
-        bold; margin-bottom: 5px; margin-top: 5px;" aria-label=".form-select-sm example" name="month">
-        <option selected>Monthly</option>
+    <form action="" method="post" class="form-inline d-flex gap-3">
+      <div class="col-md-3 pt-3">
+        <select class="form-select" style="border-radius: 20px;" aria-label=".form-select-sm example" name="salesRe" id="sales" onchange="getData()">
+          <option selected>Sales Category</option>
+          <option value="Daily">Daily</option>
+          <option value="Monthly">Monthly</option>
+          <option value="Yearly">Yearly</option>
+        </select>
+      </div>
+  
+      <div class="col-md-3 pt-3" style="display: none;" id="chooseMonth">
+        <select id="selectedMonth" class="form-select" style="border-radius: 20px;" aria-label=".form-select-sm example" name="month">
+          <option selected>Monthly</option>
         <option value="2023-01-01">January 2023</option>
         <option value="2023-02-01">February 2023</option>
         <option value="2023-03-01">March 2023</option>
@@ -46,72 +45,95 @@
         <option value="2023-10-01">October 2023</option>
         <option value="2023-11-01">November 2023</option>
         <option value="2023-12-01">December 2023</option>
-      </select>
 
-    </div>
-    <div class="col-md-2 grid-margin stretch-card pt-3" style="display: none;" id="chooseDay">
-      <input type="date" name="today" id="selectedDate">
 
-    </div>
-    <div class="col-md-2 grid-margin stretch-card pt-3" style="display: none;" id="chooseYear">
-      <select id="selectedYear" class=" form-select form-select-sm border-success" style="width: 100%; ;
-        border-width: 1px; color: rgb(15, 1, 3); border-radius: 20px; font-weight:
-        bold; margin-bottom: 5px; margin-top: 5px;" aria-label=".form-select-sm example" name="year">
-        <option selected>Year</option>
-        <option value="2023"> 2023</option>
-
-      </select>
-
-    </div>
-    <div class="col-md-2 grid-margin stretch-card pt-3">
-      <button class="btn border-0 bg-transparent text-success" type="submit" id="report">submit</button>
-    </div>
-
-  </div>
-
-    <table class="table table-bordered table-hover table-striped" style="text-align: center;">
-      <thead class="thead-dark">
-        <tr>
-          <th  scope="col">OrderID</th>
-          <th  scope="col">Client Name</th>
-          
-          <th scope="col">Order Amount</th>
-          <th scope="col">Payment Method</th>
-          <th scope="col">Order date</th>
-          <th scope="col">Order Status</th>
+        </select>
+      </div>
   
-        </tr>
-      </thead>
+      <div class="col-md-2 pt-3" style="display: none;" id="start">
+        <label for="startD">Start date</label>
+        <input type="date" name="startdate" id="startD"  class="form-control">
+      </div>
+  
+      <div class="col-md-2 pt-3" style="display: none;" id="end">
+        <label for="endD">End date</label>
+        <input type="date" name="enddate" id="endD"  class="form-control">
+      </div>
+  
+      <div class="col-md-2 pt-3" style="display: none;" id="chooseYear">
+        <select id="selectedYear" class="form-select" style="border-radius: 20px;" aria-label=".form-select-sm example" name="year">
+          <option selected>Year</option>
+        <option value="2023"> 2023</option>
+        </select>
+      </div>
+  
+      <div class="col-md-2 pt-3 mr-3">
+        <button class="btn btn-success ml-3" type="submit" id="report">Pdf Generate</button>
+      </div>
+    </form>
+  </div>
+  
 
-      <tbody>
-        <% if(locals.orders){ %>
-
-        <% orders.forEach((detail)=>{ %>
-       <% orserId=detail.orderId %>
+  <table class="table table-bordered table-hover table-striped text-center mt-3">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">OrderID</th>
+        <th scope="col">Client Name</th>
+        <th scope="col">Order Amount</th>
+        <th scope="col">Payment Method</th>
+        <th scope="col">Order date</th>
+        <th scope="col">Order Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (locals.orders) { %>
+        <% orders.forEach((detail) => { %>
+          <% orderId = detail.orderId %>
           <tr class="word-wrap">
-            <td class="word-wrap"> <%=detail.orderId %></td>
-            <td class="text-capitalize"><%=detail.user.name %> </td>
-            
-            <td>&#8377; <%=detail.totalAmount %></td>
-            <td> <%=detail.paymentMethod %></td>
-            <td> <%= detail.purchaseDate.toLocaleDateString() %></td>
-            <td>
-              <%=detail.orderItems.orderStatus %>
-            </td>
+            <td class="word-wrap"><%= detail.orderId %></td>
+            <td class="text-capitalize"><%= detail.user.name %></td>
+            <td>&#8377; <%= detail.totalAmount %></td>
+            <td><%= detail.paymentMethod %></td>
+            <td><%= detail.purchaseDate.toLocaleDateString() %></td>
+            <td><%= detail.orderItems.orderStatus %></td>
           </tr>
-          <% }) %>
-          <% }else{ %>
-            <h2>No orders </h2>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="6">
+            <h2>No orders</h2>
             <a href="/">Shop</a>
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+   <div class="align-items-center" id="pagination">
+    <nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+        <p class="text-center">Page <%= currentPage %> of <%= totalPages %></p>
+        <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                </li>
             <% } %>
-      </tbody>
-    </table>
+            <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= totalPages %>">Last</a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+</div>
+</div>
 
-    <div class="align-items-center">
-<nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
-
-</nav>
-</div> 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -123,14 +145,18 @@
       if (mode === "Daily") {
         document.getElementById('chooseYear').style.display = "none";
         document.getElementById('chooseMonth').style.display = "none";
-        document.getElementById('chooseDay').style.display = "block";
+        // document.getElementById('chooseDay').style.display = "block";
+        document.getElementById('start').style.display = "block";
+        document.getElementById('end').style.display = "block";
       } else if (mode === "Monthly") {
-        document.getElementById('chooseDay').style.display = "none";
+        document.getElementById('start').style.display = "none";
+        document.getElementById('end').style.display = "none";
         document.getElementById('chooseYear').style.display = "none";
         document.getElementById('chooseMonth').style.display = "block";
       } else if (mode === "Yearly") {
         document.getElementById('chooseMonth').style.display = "none";
-        document.getElementById('chooseDay').style.display = "none";
+        document.getElementById('start').style.display = "none";
+        document.getElementById('end').style.display = "none";
         document.getElementById('chooseYear').style.display = "block";
       } else {
 

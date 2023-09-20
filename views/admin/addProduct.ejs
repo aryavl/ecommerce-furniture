@@ -14,7 +14,7 @@
             <form action="" method="post" enctype="multipart/form-data">
               <% if(locals.message){ %>
                 <div>
-                  <p class="text-danger"><%= message %></p>
+                  <p class="text-danger" id="err"><%= message %></p>
                 </div>
                 <% } %>
        
@@ -42,9 +42,10 @@
   
                 </div>
                 <div class="col-md-9 pe-5">
-  
-                  <input type="number" class="form-control form-control-lg" name="price" />
-  
+                  <div>
+                    <p class="text-danger" id="price"></p>
+                  </div>
+                  <input type="number" class="form-control form-control-lg" min="100"  name="price" oninput="validatePrice(this)" />
                 </div>
               </div>
   
@@ -52,13 +53,13 @@
 
               <div class="row align-items-center py-3">
                 <div class="col-md-3 ps-5">
-  
+                  <p class="text-danger" id="stock"></p>
                   <h6 class="mb-0">Product Stock</h6>
   
                 </div>
                 <div class="col-md-9 pe-5">
   
-                  <input type="number" class="form-control form-control-lg" name="stock" />
+                  <input type="number" class="form-control form-control-lg" name="stock" min="1"/>
   
                 </div>
               </div>
@@ -109,7 +110,10 @@
 
               </div>
               <div style="flex: 1;">
-              <input class="form-control" name="file" multiple type="file" id="formFileMultiple" multiple />
+                <div>
+                  <p class="text-danger" id="img"></p>
+                </div>
+              <input class="form-control" name="file" multiple type="file" id="formFileMultiple" multiple oninput="validateImageCount(this)"/>
             </div>
             </div>
 
@@ -127,3 +131,100 @@
       </div>
     </div>
   </section>
+
+  <script>
+      const err = document.getElementById('price')
+      const img = document.getElementById('img')
+      const num =3
+      
+      console.log(num >= 3 && num <=3);
+     function validatePrice(input){
+        const inputValue = input.value.trim();
+        console.log( inputValue < 100);
+        if(inputValue < 100){
+          err.innerHTML = "Price should be a number and above 100";        
+        }else{
+        err.innerHTML=""
+      }
+      }
+      function validateImageCount(input) { 
+        const inputFile = input.files
+        console.log(inputFile);
+        if (inputFile.length !== 3) {
+        // If more than 3 files are selected, clear the input field and show an error message
+        input.value = null; // Clear the selected files
+       img.innerHTML="Please select a maximum of 3 images."
+    }else {
+      img.innerHTML=""
+    }
+       }
+    document.addEventListener("DOMContentLoaded", function () {
+      // Get a reference to the form and form fields
+      const form = document.querySelector("form");
+      const productName = document.querySelector('input[name="productName"]');
+      const price = document.querySelector('input[name="price"]');
+      const stock = document.querySelector('input[name="stock"]');
+      const category = document.querySelector('select[name="category"]');
+      const description = document.querySelector('textarea[name="description"]');
+      const file = document.querySelector('input[name="file"]');
+  
+
+     
+      form.addEventListener("submit", function (event) {
+        // Initialize a flag to check if the form is valid
+        let isValid = true;
+  
+        // Validation for Product Name: Required field
+        if (productName.value.trim() === "") {
+          isValid = false;
+           alert("Product Name is required.");
+          err.innerHTML="Product Name is required."
+        }
+  
+        // Validation for Product Price: Required and numeric field
+        if (price.value.trim() === "") {
+          isValid = false;
+          alert("Product Price is required.");
+        } else if (isNaN(price.value)) {
+          isValid = false;
+          alert("Product Price must be a valid number.");
+        }else if(price.value < 1){
+          isValid = false;
+          alert("Product Price must be a valid number.");
+        }
+  
+        // Validation for Product Stock: Required and numeric field
+        if (stock.value.trim() === "") {
+          isValid = false;
+          alert("Product Stock is required.");
+        } else if (isNaN(stock.value)) {
+          isValid = false;
+          alert("Product Stock must be a valid number.");
+        }
+  
+        // Validation for Product Category: Required
+        if (category.value === "Select the category") {
+          isValid = false;
+          alert("Please select a Product Category.");
+        }
+  
+        // Validation for Product Details: Required field
+        if (description.value.trim() === "") {
+          isValid = false;
+          alert("Product Details are required.");
+        }
+  
+        // Validation for Product Image: Check if a file is selected
+        if (file.files.length === 0) {
+          isValid = false;
+          alert("Please select at least one Product Image.");
+        }
+  
+        // Prevent form submission if validation fails
+        if (!isValid) {
+          event.preventDefault();
+        }
+      });
+     });
+  </script>
+  

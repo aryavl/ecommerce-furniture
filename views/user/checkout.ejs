@@ -27,15 +27,75 @@
           </div>
         </div>
       </div>
+
+      <!-- modal for coupon  -->
+      <div class="modal fade" id="offersModal" tabindex="-1" role="dialog" aria-labelledby="offersModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="offersModalLabel">Offers & Coupons</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+             
+              <p>Here are some exciting offers and coupons:</p>
+              <!-- Add your offers and coupons content here -->
+              <div>
+                
+
+                <% coupon.forEach(item=>{ %>
+                  <% if(total > item.minValue && total < item.maxValue){ %>
+                  <hr>
+                
+                  <div class="d-flex justify-content-between align-items-center mx-3 <%=item._id %>">
+                    <div>
+                  <strong>Coupon name : <%=item.couponName %></strong><br>
+                  <strong>Offer :  <%=item.couponValue %> %</strong>
+                  <p>Only applicable for &#8377; <%=item.minValue %> and more.</p>
+                </div>
+                <div>
+                  <button class="btnStyle px-3 py-1 couponApply" data-couponId="<%=item._id %>" data-couponPrice="<%=item.couponValue %>" style="border-radius: 20px;"> Apply</button>
+                </div>
+                </div>
+                <hr>
+                <% } %>
+                  <% }) %>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!--end modal for coupon  -->
       <div class="col-md-4">
         <div class="card mb-4">
           <div class="card-body">
             <div class="row">
-              <div class="col-md-8">
+              <div class="col-md-12">
                 <div class="card mb-4">
                   <div class="card-header py-3">
                     <div>
+                      <strong class="text-black">Offers & Coupons</strong>
+                    </div>
+                    <p id="para">For Exciting Offers and coupons <a href="#" data-toggle="modal" data-target="#offersModal">view</a></p>
+                  </div>
+                </div>
+                
+              </div>
+              <div class="col-md-12">
+                <div class="card mb-4">
+                  <div class="card-header py-3">
+                    <div>
+                     
                       <strong>Total amount</strong>
+                      <strong>
+                        <p class="mb-0" id="offer"></p>
+                      </strong>
                       <strong>
                         <p class="mb-0">(including VAT)</p>
                       </strong>
@@ -48,12 +108,15 @@
           </div>
         </div>
       </div>
+      <div class="col-md-4">
+    <!-- <button class="btn btn-success btn-lg btn-block col-md-6 mx-auto check" type="submit">Checkout</button> -->
+        
+        </div>
+
     </div>
   
-    <h4 class="mb-3">Address</h4>
-    <div class="d-block my-3 p-3">
-      <a href="/address" class="btn btnStyle">Add Address here </a>
-      </div>
+    <h4 class="m-t--90 ">Billing Details</h4>
+    
     
     <% addressList.forEach(item => { %>
       <% const { name, address, phone, houseNumber, pincode, city, state, landmark, alternatePhone } = item; %>
@@ -64,38 +127,130 @@
         </div>
       </div>
     <% }) %>
+    <div class="d-block my-3 p-3">
+      <a href="/address" class="">Add new address </a>
+      </div>
     <form action="" method="post" id="paymentForm">
 
     <h4 class="mb-3">Payment</h4>
     
     
     <div class="d-block my-3 p-3">
-      <div class="form-check form-check-inline mr-3">
+      <div class="form-check form-check-inline mr-5">
         <input id="cod" name="paymentMethod" type="radio" class="form-check-input" checked value="cod" required>
         <label class="form-check-label" for="cod">Cash on Delivery / Pay on delivery</label>
       </div>
-      <div class="form-check form-check-inline">
+      <div class="form-check form-check-inline mr-5">
         <input id="online" name="paymentMethod" type="radio" class="form-check-input" value="online" required >
         <label class="form-check-label" for="online">Online Payment</label>
       </div>
+      <% if(user.wallet >= total){%>
+      <div class="form-check form-check-inline">
+        <input id="wallet" name="paymentMethod" data-wallet="<%=user.wallet %>" type="radio" class="form-check-input" value="wallet" required >
+        <label class="form-check-label" for="wallet">Wallet</label>
+      </div>
+      <% } %>
+      
     </div>
-    <button class="btn btn-success btn-lg btn-block col-md-6 mx-auto check" type="submit">Checkout</button>
+    <button class="btn btnStyle btn-lg btn-block col-md-6 mx-auto check" type="submit">Checkout</button>
 </form>
   </div>
 </section>
+<!-- The Modal -->
+<div class="modal fade" id="successModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Payment Successful</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Your payment was successful. Thank you for your order!
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-    
- document.getElementById("paymentForm").addEventListener("submit", function(event) {
-      // Prevent the default form submission
+  let couponId
+  let amountAfterOffer 
+  let walletAmount
+  let amount
+  const total = document.getElementById('grand').innerText
+  const wallett = document.getElementById('wallet')
+  console.log("wallet ",wallett);
+  if(wallett !== null){
+      walletAmount = wallett.getAttribute('data-wallet');
+    //  console.log(walletAmount);
+  }
+  // const walletAmount = wallett.getAttribute('data-wallet');
+  // console.log(walletAmount);
+
+  if(total > 0){  
+    document.querySelectorAll('.couponApply').forEach(button => {
+    button.addEventListener('click', function() {
+			 couponId = this.getAttribute('data-couponId');
+			const couponPrice = this.getAttribute('data-couponPrice');
+      console.log(couponId);
+      $.ajax({
+        method: 'POST',
+        url: '/couponUpdate',
+        data: { couponId },
+        success: function(response) {
+          console.log("AJAX POST request to /test-post was successful!");
+           console.log("Response:-----", response);
+           if(response.success){
+            couponId= response.couponId
+            console.log(couponId);
+            const total = document.getElementById('grand')
+            const para = document.getElementById('para')
+            const offer = document.getElementById('offer')
+            const val = total.innerHTML
+            para.innerHTML=`Coupon Applied`
+            para.style.color="green"
+            let changedVal = val*couponPrice/100
+             amountAfterOffer = val - changedVal
+            console.log(changedVal);
+            console.log("***********")
+            console.log(amountAfterOffer);
+
+            total.innerText = amountAfterOffer
+            offer.innerHTML=`You saved &#8377; ${changedVal}`
+            $('#offersModal').modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+           }
+          },
+        error: function(error) {
+          console.error("AJAX POST request to /test-post failed:", error);
+        }
+      })
+    })
+  })
+}else{
+    alert('Payment can not be initiated!')
+  }
+
+    document.getElementById("paymentForm").addEventListener("submit", function(event) {
       event.preventDefault();
-      const total = document.getElementById('grand').innerText
-    // console.log(total);
-      // Get all radio buttons with the name "paymentMethod"
+      
+      console.log("couponId",couponId);
+     
+
+    
       let paymentMethodRadios = document.getElementsByName("paymentMethod");
       
       let paymentMode = document.querySelector('input[name="paymentMethod"]:checked').value;
-       console.log(paymentMode); //i think it is no use
+        console.log(paymentMode); 
             
       const address = document.querySelector('input[name="selectedAddress"]:checked').value;
 
@@ -105,80 +260,199 @@
       for (let i = 0; i < paymentMethodRadios.length; i++) {
         // console.log(paymentMethodRadios[i].value);
         if (paymentMethodRadios[i].checked) {
-          // Print the value of the selected radio button
-          // console.log("Selected Payment Method: " + paymentMethodRadios[i].value)
-          // break; // Exit the loop once a selected radio button is found
-          if(paymentMethodRadios[i].value === 'online'){
-            $.ajax({
-      url: '/createOrder',
-      method: 'POST',
-      dataType: 'json',
-      data:{paymentMode,total,address},
-      success: function(order) {
-      
-        var options = {
-          key: 'rzp_test_uKPAxKHe2Wj7CW',
-          amount: order.amount,
-          currency: order.currency,
-          name: 'Meubles',
-          description: 'Test Payment',
-          order_id: order.id,
-          handler: function(response) {
-            $.ajax({
-              url: '/checkout',
-              method: 'POST',
-              data:{paymentMode,total,address},
-              success: function(data) {
-                if (data.success) {
-                  alert('Payment successful!');
-                  window.location.href = "/confirm-order"; 
-                } else {
-                  alert('Payment failed!');
-                }
-              },
-              error: function() {
-                alert('Error verifying payment.');
-              }
-            });
-          }
-        };
+         
+        if(paymentMethodRadios[i].value === 'cod') {
+  console.log('codeee');
+  console.log(amountAfterOffer);
 
-        var rzp1 = new Razorpay(options);
-        rzp1.open();
-        
-      },
-      error: function() {
-        alert('Error creating order.');
+  Swal.fire({
+    title: 'Confirmation',
+    text: 'Are you sure you want to proceed?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      //  console.log(amountAfterOffer);
+      // i will come back and correct the wallet amount updation on database
+      if(amountAfterOffer !== undefined && couponId !== undefined){
+         amount =amountAfterOffer
+        console.log(paymentMode,amountAfterOffer,address);
+      }else{
+         amount = total
+         couponId=""
+        console.log(paymentMode,total,address);
       }
-    });
-    
-          }
-                   if(paymentMethodRadios[i].value === 'cod'){
-          console.log('codeee');
-          $.ajax({
-              url: '/checkout',
-              method: 'POST',
-              data:{paymentMode,total,address},
-              success: function(data) {
-                console.log(data);
-                if (data.success) {
-                  alert('Payment successful!');
-                  window.location.href = "/confirm-order"; 
-                } else {
-                  alert('Payment failed!');
-                }
-              },
-              error: function() {
-                alert('Error verifying payment.');
-              }
-            });
-        }
-          
-        }
-
       
+      $.ajax({
+        url: '/checkout',
+        method: 'POST',
+        data: { paymentMode, total:amount, couponId,address },
+        success: function (data) {
+          console.log(data);
+          if (data.success) {
+            alert('Order placed!');
+            Swal.fire({
+              icon: 'success',
+              title: 'Success!',
+              text: 'Order placed'
+            });
+            window.location.href = "/confirm-order";
+          } else {
+            alert('Payment failed!');
+          }
+        },
+        error: function () {
+          alert('Error verifying payment.');
+        }
+      });
+    } else if (result.dismiss === Swal.DismissReason.cancel) {
+      Swal.fire('Cancelled', 'Operation cancelled', 'error');
     }
-      // console.log(paymentMode);
-    });
+  });
+}else if(paymentMethodRadios[i].value === 'online'){
+		Swal.fire({
+title: 'Confirmation',
+text: 'Are you sure you want to proceed?',
+icon: 'question',
+showCancelButton: true,
+confirmButtonText: 'OK',
+cancelButtonText: 'Cancel'
+}).then((result) => {
+if (result.isConfirmed) {
+// Your code to execute when the user clicks "OK"
+if(amountAfterOffer !== undefined){
+         amount =amountAfterOffer
+        console.log(paymentMode,amountAfterOffer,address);
+      }else{
+         amount = total
+        console.log(paymentMode,total,address);
+      }
+$.ajax({
+  url: '/createOrder',
+  method: 'POST',
+  dataType: 'json',
+  data:{paymentMode,total:amount,address},
+
+  success: function(order) {
+  
+	var options = {
+	  key: 'rzp_test_uKPAxKHe2Wj7CW',
+	  amount: order.amount,
+	  currency: order.currency,
+	  name: 'Meubles',
+	  description: 'Test Payment',
+	  order_id: order.id,
+	  handler: function(response) {
+		$.ajax({
+		  url: '/checkout',
+		  method: 'POST',
+		  data:{paymentMode,total:amount,address},
+		  success: function(data) {
+			if (data.success) {
+			  Swal.fire({
+		icon: 'success',
+		title: 'Success!',
+		text: 'Order placed',
+	  });
+				  alert("Order placed")
+
+			  window.location.href = "/confirm-order"; 
+			} else {
+			  alert('Payment failed!');
+			}
+		  },
+		  error: function() {
+			alert('Error verifying payment.');
+		  }
+		});
+	  }
+	};
+
+	var rzp1 = new Razorpay(options);
+	rzp1.open();
+	
+  },
+  error: function() {
+	alert('Error creating order.');
+  }
+});
+} else if (result.dismiss === Swal.DismissReason.cancel) {
+// Your code to execute when the user clicks "Cancel" or outside the modal
+Swal.fire('Cancelled', 'Operation cancelled', 'error');
+}
+});
+	   
+
+	  }else if(paymentMethodRadios[i].value === 'wallet'){
+	  console.log('codeee');
+    Swal.fire({
+  title: 'Confirmation',
+  icon: 'question',
+  html: `<br>
+    <p>Are you sure you want to proceed?</p><br>
+    <p><strong>Wallet Balance: Rs.${walletAmount}</strong></p><br>
+    <p>Remaining Balance: Rs.${walletAmount - total}</p>
+  `,
+  showCancelButton: true,
+  confirmButtonText: 'OK',
+  cancelButtonText: 'Cancel'
+}).then((result) => {
+if (result.isConfirmed) {
+  if(amountAfterOffer !== undefined){
+         amount =amountAfterOffer
+        console.log(paymentMode,amountAfterOffer,address);
+      }else{
+         amount = total
+        console.log(paymentMode,total,address);
+      }
+$.ajax({
+		  url: '/wallet-order',
+		  method: 'POST',
+		  data:{paymentMode,total:amount,address},
+		  success: function(data) {
+			console.log(data);
+			if (data.success) {
+			  //  alert('Order placed!');
+			  Swal.fire({
+		icon: 'success',
+		title: 'Success!',
+		text: 'Order placed',
+	  });
+			window.location.href = "/confirm-order"; 
+			} else {
+			  Swal.fire({
+		icon: 'fail',
+		title: 'Fail!',
+		text: 'Failed to place Order ',
+	  });
+			}
+		  },
+		  error: function() {
+			Swal.fire({
+		icon: 'fail',
+		title: 'Fail!',
+		text: 'Failed to place Order ',
+	  });
+		  }
+		});
+} else if (result.dismiss === Swal.DismissReason.cancel) {
+// Your code to execute when the user clicks "Cancel" or outside the modal
+Swal.fire('Cancelled', 'Operation cancelled', 'error');
+}
+});
+
+	 
+	}
+
+
+
+
+        }
+      }
+      })  
+    
+  
 </script>
 <%- include('./partials/footer.ejs')  -%>

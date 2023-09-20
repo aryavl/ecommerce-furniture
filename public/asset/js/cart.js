@@ -19,14 +19,14 @@ document.querySelector('.js-addcart-detail').addEventListener('click', function(
         console.log("AJAX POST request to /test-post was successful!");
          console.log("Response:", response);
         
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: 'Product added to cart!',
-          });
+        // Swal.fire({
+        //     icon: 'success',
+        //     title: 'Success!',
+        //     text: 'Product added to cart!',
+        //   });
           
 
-              document.querySelector('.js-addcart-detail').textContent = "Remove from Cart";
+              // document.querySelector('.js-addcart-detail').textContent = "Remove from Cart";
             //  document.querySelector('.msg').textContent = response.message;
               
 

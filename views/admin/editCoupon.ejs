@@ -12,24 +12,30 @@
                 <% if(couponData){ %>
                     <% couponData.forEach(item=>{ %>
                   <form class="p-md-2" action=" " method="post">
+                   
                     <input class="form-control form-control-lg text-black-50" type="text" name="coupon_name" placeholder="Coupon Name"
-                      id="couponName" value="<%=couponData.couponName %>"" />
+                      id="couponName" value="<%=item.couponName %>"" />
                     <span id="Name"></span><br />
 
                     <div class="input-group ">
-                      <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="offer" placeholder="Offer %"
-                        id="couponOffer" value="<%= couponData?couponData.couponValue:'' %>" />
-                      <span class="input-group-text" id="basic-addon1">%</span>
+                      <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="offer" placeholder="Offer Price"
+                        id="couponOffer" value="<%= couponData?item.couponValue:'' %>" />
+                      
+                    </div>
+                    <div class="input-group ">
+                      <input class="form-control form-control-lg text-black-50" type="hidden" name="id" placeholder="Coupon id"
+                      id="couponId" value="<%=item._id %>"" />
+                      
                     </div>
                     <span id="Email"></span><br />
                     <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="min_value" placeholder="Min Value"
-                      id="min_Value" value="<%= couponData?couponData.minValue:'' %>" />
+                      id="min_Value" value="<%= couponData?item.minValue:'' %>" />
                     <span id="Number"></span><br />
                     <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="max_value" placeholder="Max Value"
-                      id="maxValue" value="<%= couponData?couponData.maxValue:'' %>" />
+                      id="maxValue" value="<%= couponData?item.maxValue:'' %>" />
                     <span id="Password"></span><br />
                     <input class="form-control form-control-lg text-black-50" type="date" name="expiry_date" placeholder="Expiry Date"
-                      id="expiryDate" value="<%= couponData?couponData.expiryDate:'' %>" />
+                      id="expiryDate" value="<%= couponData?item.expiryDate:'' %>" />
                     <input class="btn btn-primary mt-md-4" type="submit" value="Add Coupon"
                       style="background-color: green" />
                   </form>
@@ -40,37 +46,9 @@
                     </p>
                     <% } %>
                     <% }) %>
-                <% }else{ %>
-                  <form class="p-md-2" action=" " method="post">
-                    <input class="form-control form-control-lg text-black-50" type="text" name="coupon_name" placeholder="Coupon Name"
-                      id="couponName"  />
-                    <span id="Name"></span><br />
+                <% }%>
 
-                    <div class="input-group ">
-                      <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="offer" placeholder="Offer %"
-                        id="couponOffer"  />
-                      <span class="input-group-text" id="basic-addon1">%</span>
-                    </div>
-                    <span id="Email"></span><br />
-                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="min_value" placeholder="Min Value"
-                      id="min_Value"  />
-                    <span id="Number"></span><br />
-                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="max_value" placeholder="Max Value"
-                      id="maxValue" >
-                    <span id="Password"></span><br />
-                    <input class="form-control form-control-lg text-black-50" type="date" name="expiry_date" placeholder="Expiry Date"
-                      id="expiryDate"  />
-                    <input class="btn btn-primary mt-md-4" type="submit" value="Add Coupon"
-                      style="background-color: green;" />
-                  </form>
-
-                  <% if(typeof message !=='undefined' ) { %>
-                    <p style="color: red">
-                      <%= message %>
-                    </p>
-                    <% } %>
-
-                <% } %>
+                
               </div>
             </div>
           </div>

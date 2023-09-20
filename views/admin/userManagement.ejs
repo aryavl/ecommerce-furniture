@@ -1,58 +1,80 @@
 <%-include('adminNavbar')%>
     
-    <div class="d-flex" style=" width: 80%; margin-left: 25px; justify-content: space-between;">
-        <h3 class="mb-5 mt-5"> All users</h3>
+<div class="container">
+  <div class="d-flex justify-content-between">
+      <h3 class="mb-5 mt-5">All users</h3>
+  </div>
 
-      </div>
-    
-      <% if (locals.message) { %>
-        <div class="alert alert-danger">
-          <strong><%= message %> </strong>
-        </div>
-      <% } %> 
-      
-    
-        <div class="d-flex">
-        <form action="/admin/user/search" method="post" class="d-flex ms-2 me-2" role="search" >
-            <input class="form-control me-2 border-success" type="search" placeholder="Search User" id="search" name="search">
-            <button class="btn btn-success" type="submit" value="Search">Search</button>
-        </form> 
-      </div>
-     
-    
-        <table class="table table-striped" style="text-align: center;">
-          <thead class="thead-dark">
-            <tr>
-              <th  scope="col">Name</th>
+  <% if (locals.message) { %>
+  <div class="alert alert-danger">
+      <strong><%= message %></strong>
+  </div>
+  <% } %>
+
+  <div class="d-flex">
+      <form action="/admin/user/search" method="post" class="d-flex ms-2 me-2" role="search">
+          <input class="form-control me-2 border-success" type="search" placeholder="Search User" id="search" name="search">
+          <button class="btn btn-success" type="submit" value="Search">Search</button>
+      </form>
+  </div>
+
+  <table class="table table-striped" style="text-align: center; margin-top: 20px;">
+      <thead class="thead-dark">
+          <tr class="">
+              <th scope="col">Name</th>
               <th scope="col">Email</th>
               <th scope="col">Mobile</th>
               <th scope="col">Actions</th>
-            </tr>
-          </thead>
-    
-          <tbody>
-          
-            <% users.forEach(user=>{  %>
-              <tr>
-                  <td><%= user.name %></td>
-                  <td><%= user.email %></td>
-                  <td><%= user.phone %></td>
-                  <td>
-                      <% if(user.isBlocked
-                      ){ %>
-                          <a href="/admin/user/unblock?id=<%= user._id %>" class="btn btn-outline-success">
-                          Unblock
-                      </a>
-                      <% }else{ %>
-                          <a href="/admin/user/block?id=<%= user._id %>" class="btn btn-outline-success">
-                              block
-                          </a>
-                          <% } %>
-                  </td>
-              </tr>
-              <% }) %>
-          </tbody>
-        </table>
+          </tr>
+      </thead>
+
+      <tbody>
+          <% users.forEach(user => { %>
+          <tr>
+              <td><%= user.name %></td>
+              <td><%= user.email %></td>
+              <td><%= user.phone %></td>
+              <td>
+                  <% if (user.isBlocked) { %>
+                  <a href="/admin/user/unblock?id=<%= user._id %>" class="btn btn-success">
+                      Unblock
+                  </a>
+                  <% } else { %>
+                  <a href="/admin/user/block?id=<%= user._id %>" class="btn btn-danger">
+                      Block
+                  </a>
+                  <% } %>
+              </td>
+          </tr>
+          <% }) %>
+      </tbody>
+  </table>
+
+  <div class="align-items-center" id="pagination">
+    <nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+        <p class="text-center">Page <%= currentPage %> of <%= totalPages %></p>
+        <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                </li>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= totalPages %>">Last</a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+</div>
+</div>
+
         
 </body>
 </html>

@@ -7,6 +7,8 @@ const addressController = require('../../controllers/user/addressController')
 const orderController = require('../../controllers/user/orderController')
 const productController = require('../../controllers/user/productContoller')
 const filterCatController = require('../../controllers/user/filterCatController')
+const couponController = require('../../controllers/user/couponController')
+const walletController = require('../../controllers/user/walletController')
 const errorHandle = require('../../middleware/errorHandle')
 
 user_route.set("views", "./views/user")
@@ -102,6 +104,29 @@ user_route.get('/cancel',orderController.getProductCancel)
 user_route.get('/product',productController.getProducts)
 // filter categories on home page
 user_route.get('/filter-cat',filterCatController.getFilterCat)
+// filter cat using ajax
+user_route.post('/filter-cat',filterCatController.postFiltercat)
+
+
+// coupon update
+user_route.post('/couponUpdate',couponController.postCouponUpdate)
+
+
+// wallet payment
+user_route.post('/wallet-order',walletController.postWallet)
+
+// wallet
+user_route.get('/wallet',walletController.getWallet)
+
+// cart item delete or remove from cart 
+user_route.get('/cartDelete',orderController.getCartDelete)
+
+// product search in home 
+user_route.post('/',productController.postProductSearch)
+
+
+
+
 
 
 

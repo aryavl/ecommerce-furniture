@@ -80,47 +80,43 @@ try{
 //    console.log("orderLists",orderLists );
 // console.log("****************");
 
-  const orderLis = await Order.find({})
+const itemsPerPage = 6; // Set the desired number of items per page
+const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+
+// Perform the database query and populate fields
+const orderLis = await Order.find({})
   .populate('user')
   .populate({
     path: 'orderItems.product_id',
-    model: 'Products' // Replace 'Product' with the actual product model name
+    model: 'Products' // Replace 'Products' with the actual product model name
   })
-  .sort({ purchaseDate: -1 }); // Sort by purchaseDate in descending order
+  .sort({ purchaseDate: -1 });
 
-  orderLis[0].orderItems.forEach(item=>{
+// Calculate total items and total pages for pagination
+const totalItems = orderLis.length;
+const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-    // console.log("SORT ORDER",item);
-  })
-  // console.log("-----------");
+// Calculate the startIndex and endIndex to load exactly 'itemsPerPage' items
+const startIndex = (currentPage - 1) * itemsPerPage;
+const endIndex = startIndex + itemsPerPage;
 
-  // console.log(orderLists,"-----------------");
-  
-  console.log("****************");
-   console.log("orderLists",orderLis );
-console.log("****************");
-  
+// Slice the array to get items for the current page, ensuring 'itemsPerPage' items
+const itemsToShow = orderLis.slice(startIndex, endIndex);
+
+// Extract the orderItems from itemsToShow
+const innerArrays = itemsToShow.map(item => item.orderItems);
+
+// Render the page with the necessary data
+res.render('orderManagement', {
+  orders: orderLis,
+  items: itemsToShow,
+  orderItems: innerArrays,
+  totalPages: totalPages,
+  currentPage: currentPage,
+});
 
 
-    const itemsPerPage = 6;
-    const totalItems = orderLis.length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-    const currentPage = req.query.page ? parseInt(req.query.page) : 1;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const itemsToShow = orderLis.slice(startIndex, endIndex);
-
-    const innerArrays = itemsToShow.map(item => item.orderItems);
-   const ans=  innerArrays.map(item=>{
-    return item 
-    })
-    // const item=itemsToShow.map(item=>item)
-    // console.log("Inner arrays:", innerArrays.length, '$$$',item.length);
-  console.log("dsfdsaf",ans);
-    res.render('orderManagement',{orders:orderLis,items: itemsToShow,orderItems:innerArrays,
-      totalPages: totalPages,
-      currentPage: currentPage,})
 }catch(err){
     console.error("getOrderList",err.message);
 }

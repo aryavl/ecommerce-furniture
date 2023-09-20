@@ -21,10 +21,45 @@ module.exports.getOtp= async(req,res)=>{
     res.render('otpAuth')
 }
 module.exports.getHome=async(req,res)=>{
+  const getCartItems = async (user) => {
+    const cartData = [];
+    
+    for (const item of user.cart) {
+    const user =await User.findOne({email:req.session.userId})
+      const product = await Products.findOne({ _id: item.productId });
+      if (product) {
+        let total = item.count * product.price;
+        cartData.push({user:user, count: item.count, product: product,total:total });
+      }
+   
+
+    }
+    return cartData;
+  };
     try{
         // console.log("home",req.session);
         const user =await User.findOne({email:req.session.userId})
         // const products = await Products.find({})
+        
+        // const users = await User.findOne({ email: req.session.userId }, { cart: 1, _id: 0 });
+        //   console.log(user);
+        let sub
+        let uniqueCartItems
+              if (user) {
+                const cartData = await getCartItems(user);
+                let totalArr=[]
+                cartData.map(item=>{
+                    totalArr.push(item.total)
+                })
+                if(totalArr.length!==0){
+                     sub=totalArr.reduce((acc,sum)=>{return acc+sum})
+                }
+              
+                uniqueCartItems = cartData.filter((item, index, self) =>
+                  index === self.findIndex(t => t.product && t.product._id.equals(item.product._id))
+                );
+              }
+              //  console.log(uniqueCartItems,"jjjjjjj");
         const products = await Products.aggregate([
             {
               $match: {
@@ -72,9 +107,9 @@ module.exports.getHome=async(req,res)=>{
             }
           ]);
           
-            console.log(productss);
+            // console.log(productss);
 
-        res.render('home',{user:user,products:productss,category:categories,banner})
+        res.render('home',{user:user,products:productss,category:categories,banner,cart:uniqueCartItems})
 
       //  const isUserHasCart= await User.findOne({email:req.session.userId},{cart:1})
         // console.log("cartlength",isUserHasCart.cart.length);

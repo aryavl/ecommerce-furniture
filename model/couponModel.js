@@ -3,7 +3,10 @@ const db = require('../config/db');
 
 const couponSchema = new mongoose.Schema({
      userId:[{
-        type:String
+      
+          type:String,
+    
+
      }],
      couponName:{
         type:String,

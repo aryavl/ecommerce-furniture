@@ -8,6 +8,8 @@ const orderController = require("../../controllers/admin/orderController");
 const salesController = require("../../controllers/admin/salesController");
 const couponController = require("../../controllers/admin/couponController");
 const bannerController = require("../../controllers/admin/bannerController");
+const walletController = require("../../controllers/admin/walletController");
+const dashboardController = require("../../controllers/admin/dashboardController");
 const adminAuth = require("../../middleware/adminMiddleware");
 const multer = require("../../middleware/multer");
 const admin_route = express();
@@ -118,6 +120,7 @@ admin_route.get("/category/edit", categoryController.getCategoryEditModal);
 
 admin_route.post("/category/edit", categoryController.postCategoryListEdit);
 
+
 admin_route.get("/category/delete", categoryController.getCategoryDelete);
 
 admin_route.post("/category/search", categoryController.getSearch);
@@ -148,9 +151,11 @@ admin_route.post('/filter-order',orderController.postFilterOrder)
 
 // sales report
 
-admin_route.get("/sales-report", salesController.getSalesReport);
+ admin_route.get("/sales-report", salesController.getSalesReport);
+ admin_route.post("/sales-report", salesController.postSalesReport);
 
-admin_route.post("/report-order", salesController.postReport);
+// admin_route.post("/report-order", salesController.postReport);
+admin_route.post("/generatepdf", salesController.postGeneratePdf);
 
 
 
@@ -159,6 +164,8 @@ admin_route.get("/coupon", couponController.getCoupon);
 admin_route.get("/addcoupon", couponController.getAddcoupon);
 admin_route.post("/addcoupon", couponController.postAddcoupon);
 admin_route.get("/editCoupon", couponController.getEditCoupon);
+admin_route.post("/editCoupon", couponController.postEditCoupon);
+admin_route.get("/coupon/delete", couponController.getCouponDelete);
 
 
 // banner management
@@ -174,11 +181,12 @@ admin_route.post('/banner/search',bannerController.getBannerSearch)
 
 
 
+// wallet
+admin_route.get('/wallet',walletController.getWallet)
 
 
-
-
-
+// dashboard data
+admin_route.post('/graphData',dashboardController.postGraph)
 
 
 

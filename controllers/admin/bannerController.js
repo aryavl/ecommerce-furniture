@@ -12,7 +12,21 @@ module.exports.getBanner=async(req,res)=>{
           ]);
           console.log(banner);
         if(banner){
-            res.render('bannerManagement',{banner:banner})
+            const itemsPerPage = 6; // Set the desired number of items per page
+            const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+            const totalItems = banner.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            // Calculate the startIndex and endIndex to load exactly 'itemsPerPage' items
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            
+            // Slice the array to get items for the current page, ensuring 'itemsPerPage' items
+            const itemsToShow = banner.slice(startIndex, endIndex);
+            res.render('bannerManagement',{banner:banner,items: itemsToShow,
+                
+                totalPages: totalPages,
+                currentPage: currentPage,})
         }
        
     }catch(err){
@@ -69,6 +83,7 @@ console.log(req.body.search);
           if (item.length === 0) {
             res.render('bannerManagement',{banner:[]})
           } else {
+            
             res.render('bannerManagement',{banner:item})
           }
         });

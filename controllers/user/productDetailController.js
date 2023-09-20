@@ -1,4 +1,5 @@
 
+const Coupon = require("../../model/couponModel");
 const Order = require("../../model/orderModel")
 const Products = require("../../model/productModel")
 const User = require("../../model/userModel")
@@ -31,42 +32,42 @@ module.exports.postCartItem = async(req,res)=>{
         // console.log("Message received from frontend:", productId, count, req.session.userId);
         
         const product = await Products.findOne({ _id: productId });
-        
-        if (req.session.userId) {
-          const user = await User.findOne({ email: req.session.userId }, { cart: 1, _id: 0 });
-          let data = user;
-          let { cart } = data;
        
-          let found = false;
-        
-          for (const item of cart) {
-            const { productId } = item;
-            if (productId === req.body.productId) {
-              found = true;
-              break;
+          if (req.session.userId) {
+            const user = await User.findOne({ email: req.session.userId }, { cart: 1, _id: 0 });
+            let data = user;
+            let { cart } = data;
+         
+            let found = false;
+          
+            for (const item of cart) {
+              const { productId } = item;
+              if (productId === req.body.productId) {
+                found = true;
+                break;
+              }
+            }
+          
+            if (found) {
+              await User.updateOne(
+                  { email: req.session.userId, "cart.productId": req.body.productId },
+                  { $inc: { "cart.$.count": parseInt(count) } } // Increment the count by the given value
+                );
+              // res.render('productDetail', { product, message: "already carted" });
+              res.send(JSON.stringify( "count"));
+            } else {
+              await User.updateOne({ email: req.session.userId }, {
+                $push: { cart: { count: Number(req.body.count), productId: req.body.productId } }
+              });
+             
+              res.send(JSON.stringify({remove:true,message: " carted" }));
             }
           }
+          else if(req.session.userId === undefined){
+            res.send(JSON.stringify({message: " carted" }));
+              }
+                  
         
-          if (found) {
-            await User.updateOne(
-                { email: req.session.userId, "cart.productId": req.body.productId },
-                { $inc: { "cart.$.count": parseInt(count) } } // Increment the count by the given value
-              );
-            // res.render('productDetail', { product, message: "already carted" });
-            res.send(JSON.stringify( "count"));
-          } else {
-            await User.updateOne({ email: req.session.userId }, {
-              $push: { cart: { count: Number(req.body.count), productId: req.body.productId } }
-            });
-           
-            res.send(JSON.stringify({remove:true,message: " carted" }));
-          }
-        }
-        else if(req.session.userId === undefined){
-          res.send(JSON.stringify({message: " carted" }));
-            }
-                
-              
           
     }catch(err){
         console.error("postCartItem",err.message);
@@ -109,13 +110,15 @@ module.exports.getCheckout=async(req,res)=>{
     return cartData;
   };
     try{
-      
+     
       if(req.session.id){
         const user = await User.findOne({ email: req.session.userId }, { cart: 1, _id: 0 });
         const userList =await User.findOne({email:req.session.userId})
+        // console.log(userList._id.toString());
         //   console.log(user);
              
                 if (user) {
+                  console.log(userList.wallet);
                   const cartData = await getCartItems(user);
                   let totalArr=[]
                   cartData.map(item=>{
@@ -128,7 +131,22 @@ module.exports.getCheckout=async(req,res)=>{
                 );
                 // console.log(userList.address.items); [{},{}]
 
-                res.render('checkout',{user:user,addressList:userList.address.items,productData:uniqueCartItems,total:sub})
+                // const coupons = await CouponModel.find({used_users: {$ne: userId}})
+                const currentDate = new Date();
+                const availableCoupon=[]
+                 const coupons = await Coupon.find({isList:true,userId:{$ne:userList._id}})
+                  coupons.forEach(item=>{
+                    const exp = new Date(item.expiryDate)
+                    const bool = exp >= currentDate
+                    console.log(bool);
+                    if(bool){
+                      availableCoupon.push(item)
+                    }
+
+                  })
+                
+                console.log("availableCoupon",availableCoupon);
+                res.render('checkout',{user:userList,addressList:userList.address.items,productData:uniqueCartItems,total:sub,coupon:availableCoupon})
       }
     }
     }catch(err){
@@ -165,70 +183,75 @@ module.exports.postCheckout = async(req,res)=>{
       const grandTotal = Number(req.body.total);
       const paymentMode = req.body.paymentMode;
       const address= req.body.address;
-     
-      // console.log(req.body);
-      const user = await User.findOne({ email: req.session.userId }, { cart: 1 });
-      // console.log("user========",user);
-      if (user) {
-  
-        const orderItems = [];
-        user.cart.forEach(item => {
-          orderItems.push({
-          product_id: item.productId,
-          quantity: item.count,
-      })});
-      console.log(orderItems,"---------->ORDER ITEM");
-      orderItems.forEach(async (orderItem) => {
-        try {
-          // Find the product in the database by product_id
-          const product = await Products.findOne({_id: orderItem.product_id });
-      console.log("productts======",product);
-          // If the product is found, decrement the stock_quantity
-          if (product) {
-            product.stock -= orderItem.quantity;
-      
-            // Save the updated product back to the database
-            await product.save();
-          }
-        } catch (error) {
-          console.error('Error updating product stock:', error);
-        }
-      });
-  
-      
-      
-      
-        
-        const orderid =generateShortUUID();
-        // console.log("orderid",orderid);
-        // Create a new Order and insert the orderItems
-        // Get the current date
-const currentDate = new Date();
 
+ console.log("chekout",req.body);
+const user = await User.findOne({ email: req.session.userId }, { cart: 1 });
+// console.log("user========",user);
+if (user) {
+
+  const orderItems = [];
+  user.cart.forEach(item => {
+    orderItems.push({
+    product_id: item.productId,
+    quantity: item.count,
+})});
+// console.log(orderItems,"---------->ORDER ITEM");
+orderItems.forEach(async (orderItem) => {
+  try {
+    // Find the product in the database by product_id
+    const product = await Products.findOne({_id: orderItem.product_id });
+    
+// console.log("productts======",product);
+    // If the product is found, decrement the stock_quantity
+    if (product) {
+      product.stock -= orderItem.quantity;
+
+      // Save the updated product back to the database
+      await product.save();
+    }
+    
+        // const coupon = await Coupon.findOneAndUpdate(
+        //     { _id: couponId },
+        //     {
+        //       $push: { userId: user._id }
+        //     },
+        //     { new: true } // To return the updated document
+        //   );
+          
+          // console.log("Updated Coupon:", coupon);
+  } catch (error) {
+    console.error('Error updating product stock:', error);
+  }
+});
+
+  const orderid =generateShortUUID();
+const currentDate = new Date();
 // Add 10 days to the current date I am setting 10days after purchase date for delivery date
 
 const updatedDate=currentDate.setDate(currentDate.getDate() + 10);
-      const order = await Order.create({
-          orderId:orderid,
-          address:address,
-          user: user._id, 
-          orderItems:orderItems,
-          paymentMethod: paymentMode,
-          totalAmount: grandTotal,
-          orderItems: orderItems,
-          deliveryDate:updatedDate
-        });
+const order = await Order.create({
+    orderId:orderid,
+    address:address,
+    user: user._id, 
+    orderItems:orderItems,
+    paymentMethod: paymentMode,
+    totalAmount: grandTotal,
+    orderItems: orderItems,
+    deliveryDate:updatedDate
+  });
 
 
 // console.log(updatedDateAsString);
-       // console.log(order);
-        await User.updateOne(
-          {email:req.session.userId},
-          {$unset:{"cart":1}}
-          )
-          return res.status(200).json({ success: true });
-      }
-    
+ // console.log(order);
+  await User.updateOne(
+    {email:req.session.userId},
+    {$unset:{"cart":1}}
+    )
+    return res.status(200).json({ success: true });
+}
+
+     
+      
       
     }catch(err){
         console.error("postCheckout",err.message);

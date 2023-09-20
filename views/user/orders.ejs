@@ -47,7 +47,7 @@
             </div>
         <% } else { %>
 
-            <div class="col-lg-10 col-xl-10 m-lr-auto m-b-50">
+            <!-- <div class="col-lg-10 col-xl-10 m-lr-auto m-b-50">
                 <div class="m-l-25 m-r--38 m-lr-0-xl">
 
                         <span class="font-weight-bold">21 orders</span>  placed in 
@@ -58,38 +58,38 @@
                         </select>
                     </div>
                 
-            </div>
-            <%orderItem.forEach(item=>{ %>
-            <%
-            function formatDate(dateString) {
-                const date = new Date(dateString);
-                const day = date.getDate();
-                const monthNames = [
-                  "January", "February", "March",
-                  "April", "May", "June", "July",
-                  "August", "September", "October",
-                  "November", "December"
-                ];
-                const monthIndex = date.getMonth();
-                const year = date.getFullYear();
-              
-                const formattedDate = `${day} ${monthNames[monthIndex]} ${year}`;
-                return formattedDate;
-              }
-              
-              
-            %>
-            
-           
-            <% const formattedDate = formatDate(item.purchaseDate) %>
+            </div> -->
+          
             
             
             
             
             <div class="container">
-                <table class="table table-responsive">
-                    <thead class="bg-light w-100">
+                <%orderItem.forEach(item=>{ %>
+                    <%
+                    function formatDate(dateString) {
+                        const date = new Date(dateString);
+                        const day = date.getDate();
+                        const monthNames = [
+                          "January", "February", "March",
+                          "April", "May", "June", "July",
+                          "August", "September", "October",
+                          "November", "December"
+                        ];
+                        const monthIndex = date.getMonth();
+                        const year = date.getFullYear();
+                      
+                        const formattedDate = `${day} ${monthNames[monthIndex]} ${year}`;
+                        return formattedDate;
+                      }
+                      
+                      
+                    %>
                     
+                   
+                    <% const formattedDate = formatDate(item.purchaseDate) %>
+                <table class="table table-responsive">
+                    <thead class="bg-dark text-white">
                         <tr>
                             <th class="col-md-2">
                                 <small class="font-weight-normal">ORDER PLACED</small>
@@ -99,24 +99,26 @@
                                 <small class="font-weight-normal">TOTAL</small>
                                 <p class="font-weight-normal">&#8377; <%= item.totalAmount %></p>
                             </th>
-                            <th class="col-md-2">
+                            <th class="col-md-4">
                                 <small class="font-weight-normal">SHIP TO</small><br>
                                 <div class="dropdown">
-                                    <a  href="#" class="text-capitalize text-dark dropdown-toggle font-weight-normal underline" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a href="#" class="text-capitalize text-white dropdown-toggle font-weight-normal underline" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <%= item.user.name %>
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                         <!-- Dropdown content goes here -->
-                                        <a class="dropdown-item" href="#" class="gap-1 text-capitalize"> <%= item.address %></a>
+                                        <a class="dropdown-item text-capitalize" href="#"><%= item.address %></a>
                                     </div>
                                 </div>
                             </th>
-                            <th class="col-md-12 text-right">
-                                <small class="font-weight-normal">ORDER #<%= item.orderId %></small><br>
-                                <a class="font-weight-normal" href="/order-details?id=<%= item.orderId %>" cls>View order details</a>
+                            <th class="col-md-4 text-right">
+                                <!-- <small class="font-weight-bold">ORDER #<%= item.orderId %></small><br> -->
+                                <!-- <a class="font-weight-normal" href="/order-details?id=<%= item.orderId %>">View order details</a> -->
                             </th>
+                            <th class="col-md-12"></th>
                         </tr>
                     </thead>
+                    
                     
                     <tbody>
                         
@@ -134,15 +136,13 @@
                             <td></td>
                             <td></td>
                             <td>
-                                
-                                <%if(items.orderStatus !=='delivered' && items.orderStatus !=='cancel') {%>
-                                <a href="/cancel?id=<%=items._id %>&orderId=<%= item.orderId %>" class="btnStyle  pl-5 pr-5 pt-1 pb-1 " data-id="<%=items._id %>" data-orderId="<%=item.orderId %>">Cancel this delivery</a>
-                                <% }else if(items.orderStatus ==='cancel'){ %>
-                                <button class="btnStyle  pl-5 pr-5 pt-1 pb-1 " disabled> Cancelled</button>
-                                <% }else{ %>
-                                <a href="/return?orderId=<%= item.orderId %>" class="btnStyle  pl-5 pr-5 pt-1 pb-1 return"> Return item</button>
-
-                                    <% } %>
+                                <% if (items.orderStatus !== 'delivered' && items.orderStatus !== 'cancel') { %>
+                                <a href="/cancel?id=<%= items._id %>&orderId=<%= item.orderId %>" class="btn btn-danger btn-sm">Cancel this delivery</a>
+                                <% } else if (items.orderStatus === 'cancel') { %>
+                                <button class="btn btn-secondary btn-sm" disabled>Cancelled</button>
+                                <% } else { %>
+                                <a href="/return?orderId=<%= item.orderId %>" class="btn btn-success btn-sm return">Return item</a>
+                                <% } %>
                             </td>
                             
                         </tr>
@@ -153,7 +153,31 @@
                 <% }) %>
                 <% } %>
                 
-    </div>
+                <div class="align-items-center mt-2" id="pagination">
+                    <nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+                        <p class="text-center">Page <%= currentPage %> of <%= totalPages %></p>
+                        <ul class="pagination justify-content-center">
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1">First</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                                </li>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= totalPages %>">Last</a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+
+</div>
     
     
     <!-- Inside your EJS template or in a separate JavaScript file -->

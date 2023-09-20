@@ -38,6 +38,11 @@ module.exports.getOrders = async (req, res) => {
               }
             },
             {
+              $sort: {
+                purchaseDate: -1 // Sort by purchaseDate in descending order
+              }
+            },
+            {
               $group: {
                 _id: '$orderId', // Group by orderId to eliminate duplicates
                 user: { $first: '$user' },
@@ -65,7 +70,21 @@ module.exports.getOrders = async (req, res) => {
             }
           ];
           
-        const orderLists = await Order.aggregate(pipeline);
+        const orderLis = await Order.aggregate(pipeline);
+  //       const orderLis = await Order.find({})
+  // .populate('user')
+  // .populate({
+  //   path: 'orderItems.product_id',
+  //   model: 'Products' // Replace 'Product' with the actual product model name
+  // })
+  // .sort({ purchaseDate: -1 });
+  const orderLists = await Order.find({})
+  .populate('user')
+  .populate({
+    path: 'orderItems.product_id',
+    model: 'Products' // Replace 'Products' with the actual product model name
+  })
+  .sort({ purchaseDate: -1 });
         console.log("#####################");
         console.log('ORDER LIST',orderLists);
         console.log("#####################");
@@ -74,7 +93,27 @@ module.exports.getOrders = async (req, res) => {
         console.log("#####################");
         console.log('ORDER LIST',innerArrays);
         console.log("#####################");
-        res.render('orders', { user: user, orderItem: orderLists,productDetail:innerArrays});
+        
+
+        const itemsPerPage = 2;
+        const totalItems = orderLists.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+    
+        const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const itemsToShow = orderLists.slice(startIndex, endIndex);
+    
+        const innerArrayss = itemsToShow.map(item => item.orderItems);
+        const ans=  innerArrayss.map(item=>{
+        return item 
+        })
+        console.log("ans ",ans);
+        // const item=itemsToShow.map(item=>item)
+        // console.log("Inner arrays:", innerArrays.length, '$$$',item.length);
+      console.log("dsfdsaf",ans);
+        res.render('orders', { user: user, orderItem: orderLists,productDetail:innerArrays,totalPages: totalPages,
+          currentPage: currentPage,});
 
     } catch (err) {
         console.error("getOrders", err.message);
@@ -300,5 +339,21 @@ module.exports.getReturn = async(req,res)=>{
   res.render('return',{orderItems,user})
   }catch(err){
     console.error("getReturn error ----->",err.message);
+  }
+}
+
+module.exports.getCartDelete = async(req,res)=>{
+  try{ 
+      const id = req.query.id
+      console.log("iiiiiiiiiiiiii",req.query.id)
+      const userId = req.session.userId;
+       console.log("2222222222222222222",userId)
+       
+    
+    const userData= await User.findOneAndUpdate({ email: userId},{ $pull: { cart: { productId: id } } })
+    console.log("000000000000000000000000",userData.cart)
+      res.redirect('/cart')
+  }catch(err){
+      console.error("cart delete",err);
   }
 }

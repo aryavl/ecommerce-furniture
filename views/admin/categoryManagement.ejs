@@ -1,50 +1,80 @@
 <%-include('adminNavbar')%>
     
-    <div class="d-flex " style=" width: 80%; margin-left: 25px; justify-content: space-between;">
-        <h3 class="mb-5 mt-5 ml-5">Categories</h3>
-        <a href="/admin/category/addCategory" class="btn btn-outline-success" style="height: 40px; width: 200px; margin-top: 35px;">Add Category</a>
-      </div>
-    
-      <% if (locals.message) { %>
-        <div class="alert alert-danger">
-          <strong><%= message %> </strong>
-        </div>
-      <% } %> 
-      
-      <!-- <li class="nav-item"> -->
-        <!-- <a class="navbar-brand" href="/admin/dashboard">Dashboard</a> -->
-        <div class="d-flex">
-        <form action="/admin/category/search" method="post" class="d-flex ms-2 me-2" role="search" >
-            <input class="form-control me-2 border-success" type="text" placeholder="Search Category" id="search" name="search">
-            <button class="btn btn-success" type="submit" value="Search">Search</button>
-        </form> 
-      </div>
-      <!-- </li> -->
-    
-        <table class="table table-striped" style="text-align: left;">
-          <thead class="thead-dark">
-            <tr>
-             
-              <th  scope="col">Category Name</th>
+<div class="container">
+  <div class="d-flex justify-content-between">
+      <h3 class="mb-5 mt-5 ml-5">Categories</h3>
+      <a href="/admin/category/addCategory" class="btn btn-outline-success" style="height: 40px; width: 200px; margin-top: 35px;">Add Category</a>
+  </div>
+
+  <% if (locals.message) { %>
+  <div class="alert alert-danger">
+      <strong><%= message %></strong>
+  </div>
+  <% } %>
+
+  <div class="d-flex">
+      <form action="/admin/category/search" method="post" class="d-flex ms-2 me-2" role="search">
+          <input class="form-control me-2 border-success" type="text" placeholder="Search Category" id="search" name="search">
+          <button class="btn btn-success" type="submit" value="Search">Search</button>
+      </form>
+  </div>
+
+  <table class="table table-striped" style="text-align: left;margin-top: 20px;">
+      <thead class="thead-dark">
+          <tr>
+              <th scope="col">Category Name</th>
               <th scope="col">Image</th>
-              <th  scope="col">Quantity</th>
-            </tr>
-          </thead>
-    
-          <tbody>
-            <% categories.forEach((check) => { %>
-              <tr>
-                <td style="text-transform: capitalize;"> <%= check.categoryName %></td>
-                <td>  <img src="/asset/uploads/<%= check.image %>"  alt="<%= check.categoryName %>" style="width: 80px;height: 80px;"></td>
-                <td> <%= check.quantity %></td>
-                <td>
-                <a href="/admin/category/edit?id=<%=check._id%>" class="btn  btn-success">Edit</a>
-                <a href="/admin/category/delete?id=<%=check._id%>" class="btn btn-danger" style="margin-left: 5px;">Delete</a></td>
-              </tr>
-              <% }) %>
-          </tbody>
-        </table>
-    
+              <th scope="col">Quantity</th>
+              <th scope="col"></th>
+          </tr>
+      </thead>
+
+      <tbody>
+          <% categories.forEach((check) => { %>
+          <tr>
+              <td style="text-transform: capitalize;"> <%= check.categoryName %></td>
+              <td> <img src="/asset/uploads/<%= check.image %>" alt="<%= check.categoryName %>" style="width: 80px;height: 80px;"></td>
+              <td> <%= check.quantity %></td>
+             <td>
+  <div class="row">
+    <div class="col-md-6">
+      <a href="/admin/category/edit?id=<%= check._id %>" class="btn btn-success btn-block">Edit</a>
+    </div>
+    <div class="col-md-6">
+      <a href="/admin/category/delete?id=<%= check._id %>" class="btn btn-danger btn-block">Delete</a>
+    </div>
+  </div>
+</td>
+
+          </tr>
+          <% }) %>
+      </tbody>
+  </table>
+  <div class="align-items-center mt-2" id="pagination">
+    <nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+        <p class="text-center">Page <%= currentPage %> of <%= totalPages %></p>
+        <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                </li>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= totalPages %>">Last</a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+</div>
+</div>
+
         
 </body>
 </html>

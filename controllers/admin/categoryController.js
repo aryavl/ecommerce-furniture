@@ -15,7 +15,22 @@ module.exports.getCategoryList=async(req,res)=>{
             }
           ]);
         if(cat){
-            res.render('categoryManagement',{categories:cat})
+            const itemsPerPage = 6; // Set the desired number of items per page
+            const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+            const totalItems = cat.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            // Calculate the startIndex and endIndex to load exactly 'itemsPerPage' items
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            
+            // Slice the array to get items for the current page, ensuring 'itemsPerPage' items
+            const itemsToShow = cat.slice(startIndex, endIndex);
+            
+            res.render('categoryManagement',{categories:cat,items: itemsToShow,
+                
+                totalPages: totalPages,
+                currentPage: currentPage,})
         }
     }catch(err){
         console.error("getCategoryList",err);
@@ -46,14 +61,16 @@ module.exports.getCategoryEditModal = async(req,res)=>{
 module.exports.postCategoryListEdit = async(req,res)=>{
    
     try{
-        const catId = req.query.id
-    console.log(catId);
+        const catId = req.body
+    console.log(req.body);
     const category =await Category.findOneAndUpdate({_id:catId},{
         
         categoryName:req.body.categoryName,
         image:req.file.filename
     })
+    // console.log(category);
     res.redirect('/admin/category')
+
     }catch(err){
         console.error(err);
     }

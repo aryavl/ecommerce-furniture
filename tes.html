@@ -14,15 +14,186 @@ const h1= document.querySelector('.heading').innerHTML
 console.log(h1);
         })
     </script>
+
+
+
+<script>
+
+
+for (let i = 0; i < paymentMethodRadios.length; i++) {
+	// console.log(paymentMethodRadios[i].value);
+	if (paymentMethodRadios[i].checked) {
+	 
+	  if(paymentMethodRadios[i].value === 'online'){
+		Swal.fire({
+title: 'Confirmation',
+text: 'Are you sure you want to proceed?',
+icon: 'question',
+showCancelButton: true,
+confirmButtonText: 'OK',
+cancelButtonText: 'Cancel'
+}).then((result) => {
+if (result.isConfirmed) {
+// Your code to execute when the user clicks "OK"
+$.ajax({
+  url: '/createOrder',
+  method: 'POST',
+  dataType: 'json',
+  data:{paymentMode,total,address},
+
+  success: function(order) {
+  
+	var options = {
+	  key: 'rzp_test_uKPAxKHe2Wj7CW',
+	  amount: order.amount,
+	  currency: order.currency,
+	  name: 'Meubles',
+	  description: 'Test Payment',
+	  order_id: order.id,
+	  handler: function(response) {
+		$.ajax({
+		  url: '/checkout',
+		  method: 'POST',
+		  data:{paymentMode,total,address},
+		  success: function(data) {
+			if (data.success) {
+			  Swal.fire({
+		icon: 'success',
+		title: 'Success!',
+		text: 'Order placed',
+	  });
+				  alert("Order placed")
+
+			  window.location.href = "/confirm-order"; 
+			} else {
+			  alert('Payment failed!');
+			}
+		  },
+		  error: function() {
+			alert('Error verifying payment.');
+		  }
+		});
+	  }
+	};
+
+	var rzp1 = new Razorpay(options);
+	rzp1.open();
+	
+  },
+  error: function() {
+	alert('Error creating order.');
+  }
+});
+} else if (result.dismiss === Swal.DismissReason.cancel) {
+// Your code to execute when the user clicks "Cancel" or outside the modal
+Swal.fire('Cancelled', 'Operation cancelled', 'error');
+}
+});
+	   
+
+	  }
+	if(paymentMethodRadios[i].value === 'cod'){
+	  console.log('codeee');
+	  Swal.fire({
+title: 'Confirmation',
+text: 'Are you sure you want to proceed?',
+icon: 'question',
+showCancelButton: true,
+confirmButtonText: 'OK',
+cancelButtonText: 'Cancel'
+}).then((result) => {
+if (result.isConfirmed) {
+$.ajax({
+		  url: '/checkout',
+		  method: 'POST',
+		  data:{paymentMode,total,address},
+		  success: function(data) {
+			console.log(data);
+			if (data.success) {
+			   alert('Order placed!');
+			  Swal.fire({
+		icon: 'success',
+		title: 'Success!',
+		text: 'Order placed',
+	  });
+			window.location.href = "/confirm-order"; 
+			} else {
+			  alert('Payment failed!');
+			}
+		  },
+		  error: function() {
+			alert('Error verifying payment.');
+		  }
+		});
+} else if (result.dismiss === Swal.DismissReason.cancel) {
+// Your code to execute when the user clicks "Cancel" or outside the modal
+Swal.fire('Cancelled', 'Operation cancelled', 'error');
+}
+});
+
+
+	}else if(paymentMethodRadios[i].value === 'wallet'){
+	  console.log('codeee');
+	  Swal.fire({
+title: 'Confirmation',
+text: 'Are you sure you want to proceed?',
+icon: 'question',
+showCancelButton: true,
+confirmButtonText: 'OK',
+cancelButtonText: 'Cancel'
+}).then((result) => {
+if (result.isConfirmed) {
+$.ajax({
+		  url: '/wallet-order',
+		  method: 'POST',
+		  data:{paymentMode,total,address},
+		  success: function(data) {
+			console.log(data);
+			if (data.success) {
+			  //  alert('Order placed!');
+			  Swal.fire({
+		icon: 'success',
+		title: 'Success!',
+		text: 'Order placed',
+	  });
+			window.location.href = "/confirm-order"; 
+			} else {
+			  Swal.fire({
+		icon: 'fail',
+		title: 'Fail!',
+		text: 'Failed to place Order ',
+	  });
+			}
+		  },
+		  error: function() {
+			Swal.fire({
+		icon: 'fail',
+		title: 'Fail!',
+		text: 'Failed to place Order ',
+	  });
+		  }
+		});
+} else if (result.dismiss === Swal.DismissReason.cancel) {
+// Your code to execute when the user clicks "Cancel" or outside the modal
+Swal.fire('Cancelled', 'Operation cancelled', 'error');
+}
+});
+
+	 
+	}
+	}
+}
+  // console.log(paymentMode);
+
+
+</script>
+
+
+
+
+<script>
+
+
+</script>
 </body>
 </html>
-<% categories.forEach((check) => { %>
-    <tr>
-      <td style="text-transform: capitalize;"> <%= check.bannerName %></td>
-      <td>  <img src="/asset/uploads/<%= check.image %>"  alt="<%= check.bannerName %>" style="width: 80px;height: 80px;"></td>
-      <td> <%= check.description %></td>
-      <td>
-      <a href="/admin/banner/edit?id=<%=check._id%>" class="btn  btn-success">Edit</a>
-      <a href="/admin/banner/delete=<%=check._id%>" class="btn btn-danger" style="margin-left: 5px;">Delete</a></td>
-    </tr>
-    <% }) %>

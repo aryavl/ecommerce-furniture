@@ -7,38 +7,10 @@
             <div class="card-body text-center ">
               <div class=" mt-md-4 pb-md-2  b">
                 <h2 class="fw-bold mb-2 text-uppercase text-black pb-3">
-                  Add Coupon
+                  Add Coupon 
                 </h2>
-                <% if(locals.couponData){ %>
-                  <form class="p-md-2" action="/admin/addcoupons?id=<%= couponData._id  %> " method="post">
-                    <input class="form-control form-control-lg text-black-50" type="text" name="coupon_name" placeholder="Coupon Name"
-                      id="couponName" value="<%= couponData?couponData.couponName:'' %>" />
-                    <span id="Name"></span><br />
-
-                    <div class="input-group ">
-                      <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="offer" placeholder="Offer %"
-                        id="couponOffer" value="<%= couponData?couponData.couponValue:'' %>" />
-                      <span class="input-group-text" id="basic-addon1">%</span>
-                    </div>
-                    <span id="Email"></span><br />
-                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="min_value" placeholder="Min Value"
-                      id="min_Value" value="<%= couponData?couponData.minValue:'' %>" />
-                    <span id="Number"></span><br />
-                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="max_value" placeholder="Max Value"
-                      id="maxValue" value="<%= couponData?couponData.maxValue:'' %>" />
-                    <span id="Password"></span><br />
-                    <input class="form-control form-control-lg text-black-50" type="date" name="expiry_date" placeholder="Expiry Date"
-                      id="expiryDate" value="<%= couponData?couponData.expiryDate:'' %>" />
-                    <input class="btn btn-primary mt-md-4" type="submit" value="Add Coupon"
-                      style="background-color: green" />
-                  </form>
-
-                  <% if(typeof message !=='undefined' ) { %>
-                    <p style="color: red">
-                      <%= message %>
-                    </p>
-                    <% } %>
-                <% }else{ %>
+               
+                  
                   <form class="p-md-2" action=" " method="post">
                     <input class="form-control form-control-lg text-black-50" type="text" name="coupon_name" placeholder="Coupon Name"
                       id="couponName"  />
@@ -49,8 +21,11 @@
                         id="couponOffer"  />
                       <span class="input-group-text" id="basic-addon1">%</span>
                     </div>
-                    <span id="Email"></span><br />
-                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="min_value" placeholder="Min Value"
+                    
+                    <div>
+                      <p class="text-danger" id="price"></p>
+                    </div>
+                    <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="min_value" placeholder="Min Value" min="1" oninput="validatePrice(this)"
                       id="min_Value"  />
                     <span id="Number"></span><br />
                     <input class="form-control form-control-lg text-black-50 no-arrows" type="number" name="max_value" placeholder="Max Value"
@@ -68,7 +43,7 @@
                     </p>
                     <% } %>
 
-                <% } %>
+                
               </div>
             </div>
           </div>
@@ -76,6 +51,18 @@
       </div>
     </div>
   </section>
-
+<script>
+  const err = document.getElementById('price')
+  // const err = document.getElementById('price')
+  function validatePrice(input){
+        const inputValue = input.value.trim();
+        console.log( inputValue < 100);
+        if(inputValue < 1){
+          err.innerHTML = "Price should be a number and above 1";        
+        }else{
+        err.innerHTML=""
+      }
+      }
+</script>
 </body>
 </html>

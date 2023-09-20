@@ -6,17 +6,13 @@
           <div class="card-body ">
             <div class="row d-flex justify-content-between">
               <div class="col-lg-4">
-                <h4 class="card-title m-4 ">Products List</h4>
+                <h4 class="card-title m-4 ">Coupon List</h4>
               </div>
               <div class="col-lg-8 text-end">
                 <div class="row mb-5">
                     <div class="col ">
-                        <% if(locals.mode){ %>
-                            <a href="/admin/coupon"><button class="btn btn-danger m-4">Listed </button></a>
-                        <% }else{ %>
-                            <a href="/admin/coupons?id='unlisted'"><button class="btn btn-danger m-4">Unlisted </button></a>
-                        <% } %>
-                        <a href="/admin/addcoupon"><button class="btn btn-danger m-4"> Add Coupons</button></a>
+                        
+                        <a href="/admin/addcoupon"><button class="btn btn-success m-4"> Add Coupons</button></a>
                     </div>
                 </div>
               </div>
@@ -48,7 +44,7 @@
                     <%= data.couponName %>
                   </td>
                   <td>
-                    <%= data.couponValue %>
+                    <%= data.couponValue %> %
                   </td>
                   <td >
                     <%= data.minValue %>
@@ -65,7 +61,7 @@
                     </a>                  
                   </td>
                   <td>
-                    <button class="btn bg-transparent" style="color: red;" onclick="dele('<%= data._id  %>')">Delete</button>
+                    <a href="/admin/coupon/delete?id=<%= data._id  %>" class="btn bg-transparent" style="color: red;" onclick="dele('<%= data._id  %>')">Delete</a>
                   </td>
                   
                 </tr>
@@ -73,6 +69,29 @@
                   <% } %>
           </tbody>
             </table>
+            <div class="align-items-center" id="pagination">
+              <nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+                  <p class="text-center">Page <%= currentPage %> of <%= totalPages %></p>
+                  <ul class="pagination justify-content-center">
+                      <% if (currentPage > 1) { %>
+                          <li class="page-item">
+                              <a class="page-link" href="?page=1">First</a>
+                          </li>
+                          <li class="page-item">
+                              <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                          </li>
+                      <% } %>
+                      <% if (currentPage < totalPages) { %>
+                          <li class="page-item">
+                              <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                          </li>
+                          <li class="page-item">
+                              <a class="page-link" href="?page=<%= totalPages %>">Last</a>
+                          </li>
+                      <% } %>
+                  </ul>
+              </nav>
+          </div>
           </div>
         </div>
       </div>

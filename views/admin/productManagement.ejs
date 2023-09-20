@@ -1,73 +1,100 @@
 <%-include('adminNavbar')%>
-    
-    <div class="d-flex " style=" width: 80%; margin-left: 25px; justify-content: space-between;">
-        <h3 class="mb-5 mt-5 ml-5">Products</h3>
-        <a href="/admin/products/addProduct" class="btn btn-outline-success" style="height: 40px; width: 200px; margin-top: 35px;">Add New Product</a>
+<div class="container">
+  <div class="d-flex justify-content-between">
+      <h3 class="mb-5 mt-5 ml-5">Products</h3>
+      <a href="/admin/products/addProduct" class="btn btn-outline-success" style="height: 40px; width: 200px; margin-top: 35px;">Add New Product</a>
+  </div>
+
+  <div class="d-flex">
+      <form action="/admin/products/search" method="post" class="d-flex ms-2 me-2" role="search">
+          <input class="form-control me-2 border-success" type="text" placeholder="Search Product" id="search" name="search">
+          <button class="btn btn-outline-success" type="submit" value="Search">Search</button>
+      </form>
+  </div>
+
+  <% if (products.length === 0) { %>
+  <div class="row">
+      <div class="col-md-6">
+          <strong class="text-danger">No Products exist</strong>
       </div>
-    
-        <div class="d-flex">
-        <form action="/admin/products/search" method="post" class="d-flex ms-2 me-2" role="search" >
-            <input class="form-control me-2 border-success" type="text" placeholder="Search Category" id="search" name="search">
-            <button class="btn btn-outline-success" type="submit" value="Search">Search</button>
-        </form> 
+      <div class="col-md-6 py-4 ps-3">
+          <a href="/admin/products/addProduct" class="btn btn-success">Add</a>
       </div>
-   
-      <%if(products.length===0){%>
-        <div class="col-md-6">
-            <strong class="text-danger">No Products exists </strong>
-        </div>
-        <div class="col-md-6 py-4 ps-3">
-          
-            <a href="/admin/products/addProduct" class="btn btn-success">Add</a>
-          </div>
-        <% }else{ %>
-            
-            
-        <table class="table table-striped  " style="text-align: left;">
+  </div>
+  <% } else { %>
+
+    <div class="table-responsive" style="margin-top: 20px;">
+        <table class="table table-striped">
           <thead class="thead-dark">
             <tr>
-             
-              <th  scope="col">Product Name</th>
-              <th  scope="col">Images</th>
+              <th scope="col">Product Name</th>
+              <th scope="col">Images</th>
               <th scope="col">Price</th>
               <th scope="col">Stock</th>
+              <th scope="col"></th>
             </tr>
           </thead>
-    
+      
           <tbody>
-            <% for(let i=0; i<products.length; i++){  %>
-              <tr>
-                 
-                  
-                  <td style="text-transform: capitalize;"><%= products[i].productName %></td>
-                  
-                  <td>
-                    <div style="display: flex;gap: 10px;">
-                      <% products[i].images.forEach(function(imagePath) { %>
-                      <img src="/asset/uploads/<%= imagePath %>" alt="<%= products[i].productName%>" style="width: 65px; height: 65px;">
-                      <% }); %>
+            <% for (let i = 0; i < products.length; i++) { %>
+            <tr>
+              <td style="text-transform: capitalize; width: 38%;"><%= products[i].productName %></td>
+              <td>
+                <div style="display: flex; gap: 10px;">
+                  <% products[i].images.forEach(function (imagePath) { %>
+                  <img src="/asset/uploads/<%= imagePath %>" alt="<%= products[i].productName %>"
+                    style="max-width: 100%; max-height: 65px;">
+                  <% }); %>
+                </div>
+              </td>
+              <td>&#8377; <%= products[i].price %></td>
+              <td><%= products[i].stock %></td>
+              <td>
+                <div class="btn-group" role="group">
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                  <a href="/admin/products/edit?id=<%= products[i]._id %>" class="btn btn-success btn-sm py-1 px-4">Edit</a>
                     </div>
-                    </td>
-                  <td>Rs. <%= products[i].price %></td>
-                  <td> <%= products[i].stock %></td>
-                  <td>
-                          <a href="/admin/products/edit?id=<%= products[i]._id %>" class="btn btn-success">
-                          Edit
-                      </a>
+                    <div class="col-md-6">
+                  <a href="/admin/products/delete?id=<%= products[i]._id %>" class="btn btn-danger btn-sm px-3">Delete</a>
 
-                          <a href="/admin/products/delete?id=<%= products[i]._id %>" class="btn btn-danger">
-                              Delete
-                          </a>
-                          
-                  </td>
-
-                        
-       
-              </tr>
-              <% } %>
+                    </div>
+                  </div>
+              </td>
+            </tr>
+            <% } %>
           </tbody>
         </table>
-        <% } %>
+      </div>
+      
+  <% } %>
+
+  <div class="align-items-center" id="pagination">
+    <nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+        <p class="text-center">Page <%= currentPage %> of <%= totalPages %></p>
+        <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                </li>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= totalPages %>">Last</a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+</div>
+</div>
+
     
         
 </body>

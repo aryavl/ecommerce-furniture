@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const session = require('express-session')
 const path = require('path')
@@ -28,11 +29,11 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
-app.use('/admin',adminRoute)
 app.use('/',userRoute)
+app.use('/admin',adminRoute)
+
 app.use((req, res, next) => {
   res.status(404).render('error', { message: 'Page not found' });
 });
 
-app.listen(3004)
+app.listen(process.env.PORT || 8080)

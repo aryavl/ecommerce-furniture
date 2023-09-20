@@ -51,12 +51,41 @@ module.exports.postAdminLoginPage =async(req,res)=>{
                 }
             }
         ])
-        console.log(orders);
+        const pending = await Order.aggregate([
+            {
+                $unwind:"$orderItems"
+            },
+            {
+                $match:{
+                    'orderItems.orderStatus':"pending"
+                }
+            }
+        ])
+        const cancel = await Order.aggregate([
+            {
+                $unwind:"$orderItems"
+            },
+            {
+                $match:{
+                    'orderItems.orderStatus':"cancel"
+                }
+            }
+        ])
+        console.log(allOrderes.length,"deeel");
+        console.log(pending.length,"pennnd");
+        console.log(cancel.length,"cancel");
+
+        const status=[{
+            delivered:allOrderes.length,
+            pending:pending.length,
+            cancelled:cancel.length
+        }]
         let totalAmount =0
         orders.forEach(item=>{
             totalAmount += item.totalAmount
+            // console.log(item.orderItems);
         })
-        console.log(totalAmount);
+        // console.log(totalAmount);
         const productDetail = [{
             totalAmount,
             users:users.length,
@@ -82,7 +111,7 @@ module.exports.postAdminLoginPage =async(req,res)=>{
 //             }
 //         }
 // console.log(productDetail);
-        res.render('adminHomepage',{productDetail,allOrderes})
+        res.render('adminHomepage',{productDetail,allOrderes,status})
     }
 
  
