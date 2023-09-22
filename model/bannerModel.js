@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const db = require('../config/db')
+const db = require('../Config/db')
 
 const bannerSchema = new mongoose.Schema({
     

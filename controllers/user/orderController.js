@@ -70,7 +70,7 @@ module.exports.getOrders = async (req, res) => {
             }
           ];
           
-        const orderLis = await Order.aggregate(pipeline);
+        const orderLists = await Order.aggregate(pipeline);
   //       const orderLis = await Order.find({})
   // .populate('user')
   // .populate({
@@ -78,7 +78,7 @@ module.exports.getOrders = async (req, res) => {
   //   model: 'Products' // Replace 'Product' with the actual product model name
   // })
   // .sort({ purchaseDate: -1 });
-  const orderLists = await Order.find({})
+  const orderListsss = await Order.find({})
   .populate('user')
   .populate({
     path: 'orderItems.product_id',
