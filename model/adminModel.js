@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const db = require('../config/db.js')
+const db = require('../Config/db.js')
 
 const adminSchema = new mongoose.Schema({
     email:String,
