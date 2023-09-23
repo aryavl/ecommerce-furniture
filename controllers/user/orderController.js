@@ -7,6 +7,7 @@ const Razorpay = require('razorpay')
 
 module.exports.getOrders = async (req, res) => {
     try {
+      const today = new Date();
         const user = await User.findOne({ email: req.session.userId });
         const pipeline = [
           {
@@ -70,7 +71,8 @@ module.exports.getOrders = async (req, res) => {
             }
           ];
           
-        const orderLists = await Order.aggregate(pipeline);
+        const orderListss = await Order.aggregate(pipeline);
+        // console.log('$$$$$$4',orderListss);
   //       const orderLis = await Order.find({})
   // .populate('user')
   // .populate({
@@ -78,7 +80,7 @@ module.exports.getOrders = async (req, res) => {
   //   model: 'Products' // Replace 'Product' with the actual product model name
   // })
   // .sort({ purchaseDate: -1 });
-  const orderListsss = await Order.find({})
+  const orderLists = await Order.find({})
   .populate('user')
   .populate({
     path: 'orderItems.product_id',
@@ -86,13 +88,14 @@ module.exports.getOrders = async (req, res) => {
   })
   .sort({ purchaseDate: -1 });
         console.log("#####################");
-        console.log('ORDER LIST',orderLists);
+        // console.log('ORDER LIST',orderListsss);
         console.log("#####################");
-        const innerArrays = orderLists.map(item => item.orderItems);
+        const innerArrays = orderLists.forEach(item => item.orderItems);
+        
         // i need product details, order details
         console.log("#####################");
-        console.log('ORDER LIST',innerArrays);
-        console.log("#####################");
+        // console.log('inner LIST',innerArrays);
+        // console.log("#####################");
         
 
         const itemsPerPage = 2;
@@ -108,12 +111,12 @@ module.exports.getOrders = async (req, res) => {
         const ans=  innerArrayss.map(item=>{
         return item 
         })
-        console.log("ans ",ans);
+        // console.log("ans ",ans);
         // const item=itemsToShow.map(item=>item)
         // console.log("Inner arrays:", innerArrays.length, '$$$',item.length);
-      console.log("dsfdsaf",ans);
+      // console.log("dsfdsaf",ans);
         res.render('orders', { user: user, orderItem: orderLists,productDetail:innerArrays,totalPages: totalPages,
-          currentPage: currentPage,});
+          currentPage: currentPage,today});
 
     } catch (err) {
         console.error("getOrders", err.message);
@@ -174,14 +177,14 @@ module.exports.productCancel=async(req,res)=>{
     const cancelReason= req.body.cancelReason
     const productId = req.body.productId
     const quantity = req.body.quantity
-    // console.log(productId);
+    console.log(req.body);
     let product
     if(cancelReason !=='damaged'){
      product = await Products.findOneAndUpdate({_id:productId},{$inc:{stock:req.body.quantity}})
         }   
     const updatedOrder= await Order.findOneAndUpdate(
       {orderId:req.body.orderId},
-      {$set:{"orderItems.0.orderStatus":"cancel"}}
+      {$set:{"orderCancleRequest":true}}
     )
     let amount = quantity * product.price
     const user = await User.findOneAndUpdate({email:req.session.userId},{ $inc: { wallet: amount } },)
@@ -203,7 +206,7 @@ module.exports.getProductCancel=async(req,res)=>{
 
     const pipeline = [
       {$match:{
-            orderId
+            orderId:orderId
           }},
       {
       
@@ -261,7 +264,15 @@ module.exports.getProductCancel=async(req,res)=>{
       }
     ];
     const user = await User.findOne({email:req.session.userId})
-  const orderLists = await Order.aggregate(pipeline);
+  // const orderLists = await Order.aggregate(pipeline);
+  // const orderLists = await Order.findOne({orderId:req.query.orderId})
+  const orderLists = await Order.findOne({orderId:req.query.orderId})
+  .populate('user')
+  .populate({
+    path: 'orderItems.product_id',
+    model: 'Products' // Replace 'Products' with the actual product model name
+  })
+  .sort({ purchaseDate: -1 });
   console.log("%%%%%%%%%%%%5555");
   console.log(orderLists);
     res.render('orderCancel',{orderLists,user})
