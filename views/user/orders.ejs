@@ -65,7 +65,8 @@
             
             
             <div class="container">
-                <%orderItem.forEach(item=>{ %>
+                <% orderItem.forEach(item => { %>
+                    <% item.orderItems.forEach(orderItem => { %>
                     <%
                     function formatDate(dateString) {
                         const date = new Date(dateString);
@@ -88,6 +89,7 @@
                     
                    
                     <% const formattedDate = formatDate(item.purchaseDate) %>
+                    <% const formattedDeliveryDate = formatDate(item.deliveryDate) %>
                 <table class="table table-responsive">
                     <thead class="bg-dark text-white">
                         <tr>
@@ -122,34 +124,37 @@
                     
                     <tbody>
                         
-                        <%item.orderItems.forEach(items=>{%>
+                       
                         <tr>
                             <td>
                                     
-                              <img src="/asset/uploads/<%=items.product[0].images[0] %>" alt="<%=  items.product[0].productName%>" style="width: 90px; height: 95px;">
+                              <img src="/asset/uploads/<%=orderItem.product_id.images[0] %>" alt="<%=  orderItem.product_id.productName%>" style="width: 90px; height: 95px;">
                                
                             </td>
                             <td>
-                                <a class="text-capitalize text-dark underline" href="/product-detail?id=<%=items.product[0]._id %>"><%=items.product[0].productName %></a><br>
-                                <p>Return eligible through 29-Aug-2023 </p>
+                                <a class="text-capitalize text-dark underline" href="/product-detail?id=<%=orderItem.product_id._id %>"><%=orderItem.product_id.productName %></a><br>
+                                <p>Return eligible through <%=formattedDeliveryDate%> </p>
                             </td>
                             <td></td>
                             <td></td>
                             <td>
-                                <% if (items.orderStatus !== 'delivered' && items.orderStatus !== 'cancel') { %>
-                                <a href="/cancel?id=<%= items._id %>&orderId=<%= item.orderId %>" class="btn btn-danger btn-sm">Cancel this delivery</a>
-                                <% } else if (items.orderStatus === 'cancel') { %>
+                                <% if (orderItem.orderStatus !== 'delivered' && orderItem.orderStatus !== 'cancel') { %>
+                                <a href="/cancel?id=<%= orderItem.product_id._id %>&orderId=<%= item.orderId %>" class="btn btn-danger btn-sm">Cancel this delivery </a>
+                                <% }else if (orderItem.orderStatus === 'cancel') { %>
                                 <button class="btn btn-secondary btn-sm" disabled>Cancelled</button>
-                                <% } else { %>
+                                <% } else if(item.deliveryDate < today){ %>
+                                    <button></button>
+                                    <%}   else { %>
                                 <a href="/return?orderId=<%= item.orderId %>" class="btn btn-success btn-sm return">Return item</a>
                                 <% } %>
                             </td>
                             
                         </tr>
-                        <% }) %>
+                      
                        
                     </tbody>
                 </table>
+                <% }) %>
                 <% }) %>
                 <% } %>
                 

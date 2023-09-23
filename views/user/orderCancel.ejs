@@ -22,17 +22,17 @@
         <h5 class="mb-3">Items Ordered</h5>
         <ul class="list-group">
             <!-- Replace with your actual items -->
-            <% orderLists.forEach(item=>{%>
-                <% orderId=item.orderId %>
-                <%item.orderItems.forEach(items=>{%>
-                    <% const price = items.product[0].price * items.quantity %>
+            
+                <% orderId=orderLists.orderId %>
+                <%orderLists.orderItems.forEach(items=>{%>
+                    <% const price = items.product_id.price * items.quantity %>
                     <% orderItemId = items._id %>
-                    <%  productId = items.product[0]._id %>
+                    <%  productId = items.product_id._id %>
                     <% quantity=items.quantity  %>
-            <li class="list-group-item"><%=items.quantity %> x <%=items.product[0].productName%> -  &#8377;<%=price %></li>
+            <li class="list-group-item"><%=items.quantity %> x <%=items.product_id.productName%> -  &#8377;<%=price %></li>
             
            <% }) %>
-           <% }) %>
+           
         </ul>
     </div>
 
@@ -65,7 +65,7 @@
         let  orderId= this.getAttribute('data-orderId');
         let productId = this.getAttribute('data-productId');
         let quantity = this.getAttribute('data-quantity');
-        //   console.log(orderId,orderItemId);
+          console.log(orderId,orderItemId,productId,quantity);
          $.ajax({
             method:'POST',
             url:'/product-cancel',
@@ -73,10 +73,28 @@
             success:(response)=>{
                 console.log("from backend",response);
                 if(response.success){
-                    const hide = document.getElementById('hide')
-                    hide.style.display = 'none';
-                    const reveal = document.getElementById('reveal')
-                    reveal.style.display='block'
+                    Swal.fire({
+  title: 'Confirmation',
+  icon: 'question',
+  html: `<br>
+    <p>Are you sure you want to proceed?</p><br>
+    
+  `,
+  showCancelButton: true,
+  confirmButtonText: 'OK',
+  cancelButtonText: 'Cancel'
+}).then((result) => {
+if (result.isConfirmed) {
+
+    window.location.href = "/orders"; 
+
+}else {
+			  Swal.fire({
+		icon: 'fail',
+		title: 'Fail!',
+		text: 'Failed to place Order ',
+	  });
+                }})
                 }
             }
          })

@@ -12,7 +12,7 @@
                     Add Address
                   </button>                
             </div>
-            <!-- Modal -->
+    <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -181,37 +181,36 @@
   </div>
     </div>
 
-    <div class="row mt-5">
-            <%if(locals.addressList) { %>
-                <% addressList.forEach((address) => { %>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card mb-4 shadow-sm h-100">
-                            <div class="card-body">
-                                <div class="mb-3">
-                            <h3 class="mb-1"><%= address.name %></h3>
-                            <p><span class="font-weight-bold">Phone: </span><%= address.phone %></p>
-                            <p><span class="font-weight-bold">Address: </span>House No. <%= address.houseNumber %>, <%= address.landmark %> <%= address.city %> <%= address.state %></p>
-                           
-                            <p><span class="font-weight-bold">Pincode: </span><%= address.state %> <%= address.pincode %></p>
-                           <%if(address.alternatePhone!==0) { %> 
-                            <p><span class="font-weight-bold">Alternate Phone: </span><%= address.alternatePhone %> </p>
-                            <% } %>
-                        </div>
-                            <div class=" d-flex justify-content-between">
-                                <div class="btn-group">
-                                    <!-- <a class="btn btnStyle mr-2" href="/editaddress?id=<%= address._id %>">Edit</a> -->
-                                    <button class="btnStyle" onclick="editAddress('<%= JSON.stringify(address)  %>')">Edit</button>
-                                    <a class="btn btn-danger" href="/deleteaddress?id=<%= address._id %>">Delete</a>
-                                </div>
-                            </div>
-    
-                        </div>
-                    </div>
-                    </div>
-                <% }) %>
-            <%}%>
-        </div>
-
+    <div class="container mt-5">
+      <div class="row">
+          <% if (locals.addressList) { %>
+              <% addressList.forEach((address) => { %>
+                  <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                      <div class="card shadow-sm h-100">
+                          <div class="card-body">
+                              <div class="mb-3">
+                                  <h3 class="mb-1"><%= address.name %></h3>
+                                  <p><span class="font-weight-bold">Phone: </span><%= address.phone %></p>
+                                  <p><span class="font-weight-bold">Address: </span>House No. <%= address.houseNumber %>, <%= address.landmark %> <%= address.city %> <%= address.state %></p>
+                                  <p><span class="font-weight-bold">Pincode: </span><%= address.state %> <%= address.pincode %></p>
+                                  <% if (address.alternatePhone !== 0) { %> 
+                                      <p><span class="font-weight-bold">Alternate Phone: </span><%= address.alternatePhone %> </p>
+                                  <% } %>
+                              </div>
+                              <div class="d-flex justify-content-center">
+                                  <div class="btn-group">
+                                      <button class="btn btnStyle mr-3" style="border-radius: 15px; padding: 0 1.5rem" onclick="editAddress('<%= JSON.stringify(address) %>')">Edit</button>
+                                      <a class="btn btn-danger" style="border-radius: 15px; padding: 1rem 1.5rem;" href="/deleteaddress?id=<%= address._id %>">Delete</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              <% }) %>
+          <% } %>
+      </div>
+  </div>
+  
 </main>
 <div class="container mt-5" id="editAddressForm" style="display: none;">
   <div class="row justify-content-center">
@@ -379,4 +378,4 @@
   </div>
 </div>
 <script src="/asset/js/addressValidation.js"></script>
-    <%- include('./partials/footer.ejs')  -%>
+<%- include('./partials/footer.ejs')  -%>

@@ -66,7 +66,7 @@
                       <tr class="word-wrap">
                           <td class="word-wrap orderId"><%= item.orderId %></td>
                           <td class="text-capitalize username"><a href="/admin/order/admindetails?id=<%= item.orderId %>"><%= item.user.name %></a> </td>
-                          <td>
+                          <!-- <td>
                               <div class="progress">
                                   <% if (orderItem.orderStatus === 'pending') { %>
                                       <div class="progress-bar bg-warning <%= orderItem.product_id._id %>" data-orderid="<%= item.orderId %>" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
@@ -90,7 +90,7 @@
                                       </div>
                                   <% } %>
                               </div>
-                          </td>
+                          </td> -->
                           <td class="text-left"> <%= orderItem.product_id.productName %></td>
                           <td><%= item.paymentMethod %></td>
                           <td><%= item.purchaseDate.toLocaleDateString() %></td>
