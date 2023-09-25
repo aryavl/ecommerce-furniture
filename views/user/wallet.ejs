@@ -66,7 +66,31 @@
                     </table>
                 </div>
                 
-             
+               
+
+            </div>
+            <div class="align-items-center mt-2" id="pagination">
+                <nav aria-label="Page navigation example" style="width: 30%; margin: auto;">
+                    <p class="text-center">Page <%= currentPage %> of <%= totalPages %></p>
+                    <ul class="pagination justify-content-center">
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                            </li>
+                        <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= totalPages %>">Last</a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
             </div>
 </div>
 

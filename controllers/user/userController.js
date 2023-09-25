@@ -387,7 +387,7 @@ module.exports.getProfile= async(req,res)=>{
         //           index === self.findIndex(t => t.product && t.product._id.equals(item.product._id))
         //         );
         //       }
-        res.render('profile',{userdata:user,user:user,cart:uniqueCartItems})
+        res.render('profile',{userdata:user,user:user,})
     }catch(err){
         console.error("getProfile",err.message);
     }

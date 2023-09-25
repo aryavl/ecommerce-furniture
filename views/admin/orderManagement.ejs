@@ -51,7 +51,7 @@
           <tr>
               <th scope="col">OrderID</th>
               <th scope="col">Client Name</th>
-              <th scope="col">Order status</th>
+              
               <th scope="col">Product Name</th>
               <th scope="col">Payment Method</th>
               <th scope="col">Order date</th>
@@ -91,12 +91,27 @@
                                   <% } %>
                               </div>
                           </td> -->
-                          <td class="text-left"> <%= orderItem.product_id.productName %></td>
-                          <td><%= item.paymentMethod %></td>
+                          <td class="text-left text-capitalize"> <%= orderItem.product_id.productName %></td>
+                          <td class="text-capitalize"><%= item.paymentMethod %></td>
                           <td><%= item.purchaseDate.toLocaleDateString() %></td>
                           <td>
-                            <div class="col-md-6">
-                              <button data-orderid="<%= item.orderId %>" data-productid="<%= orderItem.product_id._id %>" id="btnUpdate" class="btn btn-outline-dark update" style="margin-left: 5px;"><%=orderItem.orderStatus %></button>
+                            <div class="col-md-10">
+                             
+
+                              <select class="form-select" id="statusupdate">
+                                <option value="<%=orderItem.orderStatus %>" selected><%=orderItem.orderStatus %></option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed"> Confirmed</option>
+                                <option value="delivered"> Delivered</option>
+                                <option value="cancel">Cancelled</option>
+                                <option value="return">Return</option>
+                            </select>
+                            <!-- <select class="form-select" id="cancellationReason">
+                              <option value="" selected>Select cancellation reason</option>
+                              <option value="mistake">Order created by mistake</option>
+                              <option value="damaged">Damaged Product</option>
+                              <option value="price">Item price too high</option>
+                          </select> -->
                             </div>
                             </td>
                       </tr>
@@ -142,6 +157,13 @@
 
   const data = []
 document.addEventListener('DOMContentLoaded', function() {
+
+  var statusSelect = document.getElementById("statusupdate");
+  statusSelect.addEventListener("change", function () {
+    var newStatus = statusSelect.options[statusSelect.selectedIndex].value;
+      console.log(newStatus);
+      console.log("helo");
+  })
 
 document.querySelectorAll('.update').forEach(button => {
   button.addEventListener('click', function() {
