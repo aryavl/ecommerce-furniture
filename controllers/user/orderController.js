@@ -80,7 +80,7 @@ module.exports.getOrders = async (req, res) => {
   //   model: 'Products' // Replace 'Product' with the actual product model name
   // })
   // .sort({ purchaseDate: -1 });
-  const orderLists = await Order.find({})
+  const orderLists = await Order.find({user:user._id})
   .populate('user')
   .populate({
     path: 'orderItems.product_id',

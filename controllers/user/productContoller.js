@@ -1,3 +1,4 @@
+const Banner = require("../../model/bannerModel");
 const Category = require("../../model/categoryModel");
 const Products = require("../../model/productModel");
 const User = require("../../model/userModel");
@@ -26,7 +27,7 @@ module.exports.getProducts=async(req,res)=>{
         console.error("getProducts ===> ",err.message);
     }
 }
-
+// not using
 module.exports.postProductSearch= async(req,res)=>{
   try{
     console.log(req.body);
@@ -52,3 +53,34 @@ module.exports.postProductSearch= async(req,res)=>{
 }
 }
 
+module.exports.postSearchCheck=async(req,res)=>{
+ 
+    try{
+      
+    const searchQuery = new RegExp("^" + req.body.search, "i"); 
+    // Adding "i" flag for case-insensitive search
+    const user = await User.findOne({email:req.session.userId})
+
+    const category=await Category.find({isList:true})
+    const products=await Products.find({ productName: { $regex: searchQuery } })
+    console.log("search ",products)  
+    const banner = await Banner.aggregate([
+      {
+        $match: {
+          isList: true
+        }
+      }
+    ]);
+    
+    if (products.length === 0) {
+        res.render('home',{ user:user,products: [], category: category ,banner})
+      } else {
+        res.render('home',{ user:user,products: products, category: category ,banner})
+      }
+  
+    }
+    catch(err){
+console.log(err.message)
+    }
+
+}

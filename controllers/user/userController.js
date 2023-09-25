@@ -130,7 +130,6 @@ module.exports.getHome=async(req,res)=>{
 }
 
 module.exports.getCart=async(req,res)=>{
-
     const getCartItems = async (user) => {
         const cartData = [];
         
@@ -141,8 +140,6 @@ module.exports.getCart=async(req,res)=>{
             let total = item.count * product.price;
             cartData.push({user:user, count: item.count, product: product,total:total });
           }
-       
-
         }
         return cartData;
       };
@@ -176,12 +173,9 @@ module.exports.getCart=async(req,res)=>{
       } catch (e) {
         console.error("getCart", e.message);
         return res.status(500).send("Internal Server Error");
-      }
-      
-      
-      
-      
+      }  
 }
+
 module.exports.getSignup = async(req,res)=>{
     res.render('signup')
 }
@@ -362,9 +356,38 @@ module.exports.postResetPassword=async(req,res)=>{
 // try{}catch(e){console.error(e.message);}
 
 module.exports.getProfile= async(req,res)=>{
+  const getCartItems = async (user) => {
+    const cartData = [];
+    
+    for (const item of user.cart) {
+    const user =await User.findOne({email:req.session.userId})
+      const product = await Products.findOne({ _id: item.productId });
+      if (product) {
+        let total = item.count * product.price;
+        cartData.push({user:user, count: item.count, product: product,total:total });
+      }
+    }
+    return cartData;
+  }
     try{
+      
         const user =await User.findOne({email:req.session.userId})
-        res.render('profile',{userdata:user,user:user})
+        // let uniqueCartItems
+        //       if (user) {
+        //         const cartData = await getCartItems(user);
+        //         let totalArr=[]
+        //         cartData.map(item=>{
+        //             totalArr.push(item.total)
+        //         })
+        //         if(totalArr.length!==0){
+        //              sub=totalArr.reduce((acc,sum)=>{return acc+sum})
+        //         }
+              
+        //         uniqueCartItems = cartData.filter((item, index, self) =>
+        //           index === self.findIndex(t => t.product && t.product._id.equals(item.product._id))
+        //         );
+        //       }
+        res.render('profile',{userdata:user,user:user,cart:uniqueCartItems})
     }catch(err){
         console.error("getProfile",err.message);
     }

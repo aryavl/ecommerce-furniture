@@ -201,7 +201,12 @@
                 <a href="/address">Address</a>
             </li>
             <li>
+                <% if(locals.user){ %>
                 <a href="/cart">Cart</a>
+                <% }else{ %>
+                    <a href="/login">Cart</a>
+
+                        <% } %>
             </li>
 
             
