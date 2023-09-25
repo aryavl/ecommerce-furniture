@@ -9,6 +9,7 @@ const productController = require('../../controllers/user/productContoller')
 const filterCatController = require('../../controllers/user/filterCatController')
 const couponController = require('../../controllers/user/couponController')
 const walletController = require('../../controllers/user/walletController')
+const profileController = require('../../controllers/user/profileController')
 const errorHandle = require('../../middleware/errorHandle')
 
 user_route.set("views", "./views/user")
@@ -124,9 +125,11 @@ user_route.get('/wallet',walletController.getWallet)
 user_route.get('/cartDelete',orderController.getCartDelete)
 
 // product search in home 
-user_route.post('/',productController.postProductSearch)
+// user_route.post('/',productController.postProductSearch)
 
+// profile data edit
 
+user_route.post('/editUser',profileController.postUserEdit)
 
 
 

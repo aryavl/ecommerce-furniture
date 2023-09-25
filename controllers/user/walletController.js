@@ -99,8 +99,21 @@ module.exports.getWallet=async(req,res)=>{
     console.log("$$$$");
     console.log(wallet);
     console.log("$$$$");
-    
-        res.render('wallet',{user,wallet })
+    const itemsPerPage = 2;
+    const totalItems = wallet.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+    const currentPage = req.query.page ? parseInt(req.query.page) : 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const itemsToShow = wallet.slice(startIndex, endIndex);
+
+    const innerArrayss = itemsToShow.map(item => item.orderItems);
+    const ans=  innerArrayss.map(item=>{
+    return item 
+    })
+        res.render('wallet',{user,wallet,totalPages: totalPages,
+          currentPage: currentPage, })
     }catch(err){
         console.error("getWallet ----> ",err.message);
     }

@@ -40,36 +40,33 @@
 
                         <!-- Personal Details Update Division-->
                         <div class="col-md-8 p-lg-5" id="profileDetails">
-                            <div class="pt-md-2">
-                                <h6>Personal Details</h6>
+                            
+                                <div class="pt-md-3">
+                                    <h6>Personal Details</h6>
                                 <h6 class="pt-md-5">Name</h6>
-                                <div class="row d-flex pt-md-1">
-                                    <div class="col-md-5" id="first_name">
-                                        <input type="text" id="name" name="name" placeholder="Name"
-                                            value="<%=  userdata.name %>" disabled>
-                                    </div>
-                                    <div class="col-md-1" id="first_name">
-                                        <button onclick="editName()" style="border: none;" id="editNameButton"
-                                            class="btn bg-white">edit</button>
-                                    </div>
-                                    <div class="col-md-3" id="update_button" style="display: none;">
-                                        <button class="btn " onclick="saveName()"> Update</button>
-                                    </div>
-                                    <div class="col-md-3" id="cancel_button" style="display: none;">
-                                        <button class="btn " onclick="cancel()"> cancel</button>
+                                    <div class="row d-flex pt-md-1">
+                                        <div class="col-md-5">
+                                            <input type="text" placeholder="Name" id="name" value="<%=  userdata.name %>" disabled>
+                                        </div>
+                                        <div class="col-md-1" id="editName">
+                                            <button onclick="toggleEditName()" style="border: none;" id="editNameButton" class="btn bg-white">Edit</button>
+                                        </div>
+                                        <div class="col-md-3" id="update_buttonName" style="display: none;">
+                                            <button class="btn " onclick="saveName()"> Update</button>
+                                        </div>
+                                        <div class="col-md-3" id="cancel_buttonName" style="display: none;">
+                                            <button class="btn " onclick="cancel()"> cancel</button>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="pt-md-3">
                                     <h6>Phone Number</h6>
                                     <div class="row d-flex pt-md-1">
                                         <div class="col-md-5">
-                                            <input type="text" placeholder="Phone" id="phone"
-                                                value="<%=  userdata.phone %>" disabled>
+                                            <input type="text" placeholder="Phone" id="phone" value="<%=  userdata.phone %>" disabled>
                                         </div>
                                         <div class="col-md-1" id="editPhone">
-                                            <button onclick="editPhone()" style="border: none;" id="editPhoneButton"
-                                                class="btn bg-white">edit</button>
-
+                                            <button onclick="toggleEditPhone()" style="border: none;" id="editPhoneButton" class="btn bg-white">Edit</button>
                                         </div>
                                         <div class="col-md-3" id="update_buttonPhone" style="display: none;">
                                             <button class="btn " onclick="savePhone()"> Update</button>
@@ -206,4 +203,77 @@
 
     </section>
 <script src="/public/asset/js/profile.js"></script>
+<script>
+    function toggleEditPhone() {
+        const phoneInput = document.getElementById("phone");
+        const editButton = document.getElementById("editPhoneButton");
+
+        if (phoneInput.disabled) {
+            // Enable the input field
+            phoneInput.removeAttribute("disabled");
+            // Change the button text to "Save" for editing
+            editButton.textContent = "Save";
+        } else {
+            // Get the edited value
+            let editedValue = phoneInput.value;
+            
+            // Perform any necessary updates here if needed
+            
+            // Disable the input field again
+            phoneInput.setAttribute("disabled", "disabled");
+            // Change the button text back to "Edit"
+            editButton.textContent = "Edit";
+
+            // You can now use 'editedValue' as the edited phone number
+            console.log("Edited Phone:", editedValue);
+            $.ajax({
+                method:'post',
+                url:'/editUser',
+                data:{editedValue,msg:'phone'},
+                success:(data)=>{
+                    console.log(data);
+                },
+                error:(error)=>{
+                    console.error("AJAX POST request to edit user detail is failed:", error);
+                }
+
+            })
+        }
+    }
+function toggleEditName() { 
+    const nameInput = document.getElementById("name");
+        const editButton = document.getElementById("editNameButton");
+        if (nameInput.disabled) {
+            // Enable the input field
+            nameInput.removeAttribute("disabled");
+            // Change the button text to "Save" for editing
+            editButton.textContent = "Save";
+        } else {
+            // Get the edited value
+            let editedValue = nameInput.value;
+            
+            // Perform any necessary updates here if needed
+            
+            // Disable the input field again
+            nameInput.setAttribute("disabled", "disabled");
+            // Change the button text back to "Edit"
+            editButton.textContent = "Edit";
+
+            // You can now use 'editedValue' as the edited phone number
+            console.log("Edited name:", editedValue);
+            $.ajax({
+                method:'post',
+                url:'/editUser',
+                data:{editedValue,msg:'name'},
+                success:(data)=>{
+                    console.log(data);
+                },
+                error:(error)=>{
+                    console.error("AJAX POST request to edit user detail is failed:", error);
+                }
+
+            })
+        }
+ }
+</script>
 <%- include('./partials/footer.ejs')  -%>

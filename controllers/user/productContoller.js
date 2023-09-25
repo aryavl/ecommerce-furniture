@@ -62,7 +62,8 @@ module.exports.postSearchCheck=async(req,res)=>{
     const user = await User.findOne({email:req.session.userId})
 
     const category=await Category.find({isList:true})
-    const products=await Products.find({ productName: { $regex: searchQuery } })
+    const products=await Products.find({ productName: { $regex: searchQuery, },isList:true })
+    const product=await Products.find({isList:true})
     console.log("search ",products)  
     const banner = await Banner.aggregate([
       {
@@ -73,7 +74,7 @@ module.exports.postSearchCheck=async(req,res)=>{
     ]);
     
     if (products.length === 0) {
-        res.render('home',{ user:user,products: [], category: category ,banner})
+        res.render('home',{ user:user,products: product, category: category ,banner})
       } else {
         res.render('home',{ user:user,products: products, category: category ,banner})
       }
