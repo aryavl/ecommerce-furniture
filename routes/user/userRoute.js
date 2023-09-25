@@ -107,6 +107,8 @@ user_route.get('/filter-cat',filterCatController.getFilterCat)
 // filter cat using ajax
 user_route.post('/filter-cat',filterCatController.postFiltercat)
 
+// search product
+user_route.post('/search',productController.postSearchCheck)
 
 // coupon update
 user_route.post('/couponUpdate',couponController.postCouponUpdate)

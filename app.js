@@ -15,7 +15,7 @@ app.use(function (req, res, next) {
   next();
 });
 app.use(session({
-  secret: "uuidv4",
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true
 }))
@@ -26,6 +26,7 @@ app.use((req, res, next) => {
   res.setHeader('Expires', '0');
   next();
 });
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 
