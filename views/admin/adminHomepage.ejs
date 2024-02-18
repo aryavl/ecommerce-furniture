@@ -92,40 +92,13 @@
   </div>
 <script id="status" type="application/json"><%- JSON.stringify(status) %></script>
 
+
   <script>
   let statusScript = document.getElementById('status')
 let orderstatuss = JSON.parse(statusScript.textContent)
 console.log("hi",orderstatuss);
 
-const stat = document.getElementById('stat').getContext('2d');
-const chart = new Chart(stat, {
-  type: 'pie',
-  data: {
-    labels: ['Delivered', 'Pending', 'Cancelled'],
-    datasets: [{
-      label: ['Delivered', 'Pending', 'Cancelled'],
-      data: [orderstatuss[0].delivered, orderstatuss[0].pending, orderstatuss[0].cancelled],
-      backgroundColor: [
-        'rgba(33, 145, 4, 0.7)',
-        'rgba(196, 39, 22, 0.7)',
-        'rgba(255, 118, 0, 0.7)',
-      ],
-    }]
-  },
-  options: {
-   
-    aspectRatio: 1, // Set the aspect ratio (1 for a square chart)
-    responsive: true, // Make the chart responsive
-    maintainAspectRatio: false, // Disable aspect ratio constraint
-    scales: {
-      yAxes: [{
-        ticks: {
-          beginAtZero: true,
-        }
-      }]
-    }
-  }
-});
+FUFX
 
 const ctx = document.getElementById('myChart').getContext('2d');
 const myChart = new Chart(ctx, {
